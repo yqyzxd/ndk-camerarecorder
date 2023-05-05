@@ -1,8 +1,12 @@
 package com.wind.ndk.camera
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import com.wind.ndk.camera.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,20 +19,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI()
-    }
 
-    /**
-     * A native method that is implemented by the 'camera' native library,
-     * which is packaged with this application.
-     */
-    external fun stringFromJNI(): String
-
-    companion object {
-        // Used to load the 'camera' library on application startup.
-        init {
-            System.loadLibrary("camera")
+        binding.btnPreview.setOnClickListener {
+            if(ActivityCompat.checkSelfPermission(it.context,android.Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(it.context as Activity, arrayOf(android.Manifest.permission.CAMERA),1)
+                return@setOnClickListener
+            }
+            startActivity(Intent(it.context,CameraPreviewActivity::class.java))
         }
+
+
     }
+
 }

@@ -21,7 +21,13 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        native-lib.cpp)
+        com_wind_ndk_camera_CameraPreviewScheduler.cpp
+        message_queue/message_queue.cpp
+        message_queue/handler.cpp
+        egl_core/egl_share_context.cpp
+        egl_core/egl_core.cpp
+        camera_preview_controller.cpp
+        )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -45,4 +51,9 @@ target_link_libraries( # Specifies the target library.
 
         # Links the target library to the log library
         # included in the NDK.
-        ${log-lib})
+        log
+        android
+        GLESv2
+        EGL
+        z
+        )

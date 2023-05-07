@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (Landroid/view/Surface;)V
  */
 JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnSurfaceCreated
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jobject,jint);
 
 /*
  * Class:     com_wind_ndk_camera_CameraPreviewScheduler
@@ -30,6 +30,9 @@ JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnS
  */
 JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnSurfaceDestroyed
   (JNIEnv *, jobject);
+
+
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnFrameAvailable(JNIEnv*, jobject);
 
 #ifdef __cplusplus
 }

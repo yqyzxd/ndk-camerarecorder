@@ -1,7 +1,6 @@
 #ifndef ANDROID_EGL_CORE_H_
 #define ANDROID_EGL_CORE_H_
 
-#include "../log.h"
 #include <pthread.h>
 #include <android/native_window.h>
 #include <EGL/egl.h>
@@ -18,8 +17,6 @@ public:
     bool init();
 
     bool init(EGLContext sharedContext);
-
-    bool initWithSharedContext();
 
   	EGLSurface createWindowSurface(ANativeWindow* _window);
     EGLSurface createOffscreenSurface(int width, int height);

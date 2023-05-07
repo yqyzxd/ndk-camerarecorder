@@ -8,7 +8,7 @@ import com.wind.ndk.camera.databinding.ActivityCameraPreviewBinding
 
 class CameraPreviewActivity  : AppCompatActivity() {
     private lateinit var binding: ActivityCameraPreviewBinding
-
+    private lateinit var scheduler:CameraPreviewScheduler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -25,7 +25,12 @@ class CameraPreviewActivity  : AppCompatActivity() {
         params.height=windowManager.defaultDisplay.height
 
 
+        val camera=VideoCamera()
+        scheduler=CameraPreviewScheduler(previewView,camera)
 
+        binding.btnSwitch.setOnClickListener {
+
+        }
 
     }
 }

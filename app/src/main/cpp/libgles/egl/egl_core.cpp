@@ -1,7 +1,7 @@
-#include "./egl_core.h"
-#include  "./egl_share_context.h"
-#define LOG_TAG "EGLCore"
+#include "egl_core.h"
+#include "../../utils/log.h"
 
+#define LOG_TAG "EGLCore"
 
 EGLCore::EGLCore() {
 	pfneglPresentationTimeANDROID = 0;
@@ -13,12 +13,10 @@ EGLCore::~EGLCore() {
 }
 
 void EGLCore::release() {
-	if(EGL_NO_DISPLAY != display && EGL_NO_CONTEXT != context){
-		eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		LOGI("after eglMakeCurrent...");
-		eglDestroyContext(display, context);
-		LOGI("after eglDestroyContext...");
-	}
+	eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	LOGI("after eglMakeCurrent...");
+	eglDestroyContext(display, context);
+	LOGI("after eglDestroyContext...");
 	display = EGL_NO_DISPLAY;
 	context = EGL_NO_CONTEXT;
 }
@@ -67,6 +65,7 @@ EGLSurface EGLCore::createOffscreenSurface(int width, int height) {
 
 int EGLCore::setPresentationTime(EGLSurface surface, khronos_stime_nanoseconds_t nsecs) {
 	pfneglPresentationTimeANDROID(display, surface, nsecs);
+	return 0;
 }
 
 int EGLCore::querySurface(EGLSurface surface, int what) {
@@ -89,16 +88,6 @@ void EGLCore::doneCurrent() {
 
 bool EGLCore::init() {
 	return this->init(NULL);
-}
-
-bool EGLCore::initWithSharedContext(){
-	EGLContext context = EglShareContext::getSharedContext();
-
-	if (context == EGL_NO_CONTEXT){
-		return false;
-	}
-
-	return init(context);
 }
 
 bool EGLCore::init(EGLContext sharedContext) {

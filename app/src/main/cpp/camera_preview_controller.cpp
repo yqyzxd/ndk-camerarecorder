@@ -3,26 +3,51 @@
 //
 
 #include "camera_preview_controller.h"
-
-
-void *CameraPreviewController::threadCallback(void *ctx) {
+#define LOG_TAG "CameraPreviewController"
+void CameraPreviewController::updateTexImage(void *ctx) {
+    LOGI("before updateTexImage");
     CameraPreviewController* controller= static_cast<CameraPreviewController *>(ctx);
-    controller->loop();
-    return 0;
+    PreviewRenderer*renderer= dynamic_cast<PreviewRenderer *>(controller->glSurface->getRenderer());
+    renderer->updateTexImage();
+    LOGI("after updateTexImage");
+
 }
 
-CameraPreviewController::CameraPreviewController() {
+CameraPreviewController::CameraPreviewController(JavaVM *javaVM, jobject jobj,int cameraFacingId) {
 
-
-    handler=new CameraPreviewHandler(this);
-    //启动渲染线程
-    pthread_create(&threadId,0,threadCallback,this);
+    glSurface=new GLSurface;
+    glSurface->setRenderer(new PreviewRenderer(javaVM,jobj,cameraFacingId));
 }
 
 CameraPreviewController::~CameraPreviewController() {
+    glSurface->dealloc();
+    delete glSurface;
+    glSurface= nullptr;
+}
+
+void CameraPreviewController::onSurfaceCreated(ANativeWindow *window) {
+    LOGI("onSurfaceCreated");
+    glSurface->surfaceCreated(window);
 
 }
 
-void CameraPreviewController::loop() {
+void CameraPreviewController::onSurfaceChanged(int width, int height) {
+    LOGI("surfaceChanged");
+    glSurface->surfaceChanged(width,height);
+}
+
+void CameraPreviewController::onSurfaceDestroyed() {
+    LOGI("surfaceDestroyed");
+    glSurface->surfaceDestroyed();
+}
+
+void CameraPreviewController::onFrameAvailable() {
+    LOGI("onFrameAvailable");
+    glSurface->queueEvent(new Runnable(updateTexImage,this));
 
 }
+
+
+
+
+

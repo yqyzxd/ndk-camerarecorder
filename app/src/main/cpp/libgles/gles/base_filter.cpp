@@ -9,10 +9,11 @@
 #define LOG_TAG "BaseFilter"
 BaseFilter::BaseFilter(const char *vertexSource, const char *fragmentSource) {
 
-    LOGE( "before createProgram");
+    LOGI( "before createProgram");
     mProgram=createProgram(vertexSource,fragmentSource);
-    LOGE( "after createProgram mProgram:%d",mProgram);
+    LOGI( "after createProgram mProgram:%d",mProgram);
     checkGlError("createProgram");
+    getLocation();
 }
 
 void BaseFilter::onReady(int width, int height) {
@@ -24,6 +25,7 @@ void BaseFilter::getLocation() {
     mPositionLocation= glGetAttribLocation(mProgram,"a_Position");
     mCoordLocation= glGetAttribLocation(mProgram,"a_Coordinate");
     mTextureLocation= glGetUniformLocation(mProgram,"u_Texture");
+    LOGI("mPositionLocation:%d,mCoordLocation:%d,mTextureLocation:%d",mPositionLocation,mCoordLocation,mTextureLocation);
 }
 
 GLuint BaseFilter::onDrawFrame(GLuint textureId) {

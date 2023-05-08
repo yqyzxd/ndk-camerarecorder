@@ -14,11 +14,31 @@ PreviewRenderer::PreviewRenderer(JavaVM*javaVm,jobject jobj,int cameraFacingId) 
 }
 
 PreviewRenderer::~PreviewRenderer() {
+    if (mCaller){
+        delete mCaller;
+        mCaller= nullptr;
+    }
 
+    if (mTexture){
+        mTexture->dealloc();
+        delete mTexture;
+        mTexture= nullptr;
+    }
+
+    if (mCameraFilter){
+        mCameraFilter->dealloc();
+        delete mCameraFilter;
+        mCameraFilter= nullptr;
+    }
+    if (mScreenFilter){
+        mScreenFilter->dealloc();
+        delete mScreenFilter;
+        mScreenFilter= nullptr;
+    }
 }
 
 void PreviewRenderer::surfaceCreated() {
-    mTexture=new Texture();
+    mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
     mTexture->createTexture();
     mCameraFilter=new CameraFilter();
     CameraInfo* cameraInfo=mCaller->configCamera(mCameraFacingId);
@@ -46,6 +66,7 @@ void PreviewRenderer::onDrawFrame() {
 }
 void PreviewRenderer::surfaceDestroyed() {
     mCameraFilter->dealloc();
+    mScreenFilter->dealloc();
 }
 
 void PreviewRenderer::updateTexImage() {

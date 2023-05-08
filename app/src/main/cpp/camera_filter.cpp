@@ -3,7 +3,8 @@
 //
 
 #include "camera_filter.h"
-
+#include "utils/log.h"
+#define LOG_TAG "CameraFilter"
 CameraFilter::CameraFilter()
         : BaseFboFilter(CAMERA_VERTEX_SHADER, CAMERA_FRAGMENT_SHADER) {
 }
@@ -18,13 +19,18 @@ GLuint CameraFilter::getTextureTarget() {
 void CameraFilter::getLocation() {
     BaseFboFilter::getLocation();
     uMatrixLocation= glGetUniformLocation(mProgram,"u_Matrix");
+    LOGI("uMatrixLocation:%d",uMatrixLocation);
 }
 
 void CameraFilter::inflateLocation(GLuint textureId) {
     BaseFboFilter::inflateLocation(textureId);
-    glUniformMatrix4fv(uMatrixLocation,1, GL_FALSE,matrix);
+    if (matrix){
+        glUniformMatrix4fv(uMatrixLocation,1, GL_FALSE,matrix);
+    }
+
 }
 
 void CameraFilter::setMatrix(GLfloat *matrix) {
+    LOGI("setMatrix %x",matrix);
     this->matrix=matrix;
 }

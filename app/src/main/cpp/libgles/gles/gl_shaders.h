@@ -21,7 +21,7 @@ static char* base_vertex=SHADER_STRING(
             void main() {
                 //内置变量 gl_Position ,我们把顶点数据赋值给这个变量 opengl就知道它要画什么形状了
                 gl_Position = a_Position;
-                v_Coord = a_Coordinate;
+                v_Coordinate = a_Coordinate;
             }
         );
 

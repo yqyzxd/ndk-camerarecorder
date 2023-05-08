@@ -27,14 +27,14 @@ static char* CAMERA_FRAGMENT_SHADER=
         "uniform samplerExternalOES u_Texture;\n"
         "varying vec2 v_Coordinate;\n"
         "void main(){\n"
-        "   gl_FragColor=texture2D(u_Texture,v_Coordinate)"
+        "   gl_FragColor=texture2D(u_Texture,v_Coordinate);"
         "}\n";
 
 
 class CameraFilter : public BaseFboFilter{
 private:
     GLuint uMatrixLocation;
-    GLfloat* matrix;
+    GLfloat* matrix = nullptr;
 public:
 
     CameraFilter();

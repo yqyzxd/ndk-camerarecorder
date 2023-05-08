@@ -95,7 +95,7 @@ GLuint loadShader(GLenum type, const char* shaderSrc){
         glDeleteShader(shader);
         return 0;
     }
-    LOGE("Shader loadShader shader:%d",shader);
+    LOGI("loadShader shader:%d",shader);
     return shader;
 }
 

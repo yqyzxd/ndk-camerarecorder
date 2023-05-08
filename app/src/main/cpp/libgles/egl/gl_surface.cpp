@@ -28,7 +28,7 @@ void *GLSurface::threadStartRoutine(void *myself) {
 }
 
 void GLSurface::setRenderer(GLRenderer *renderer) {
-    LOGE("setRenderer");
+    LOGI("setRenderer");
     this->mRenderer=renderer;
     if (mRenderThreadStarted){
         //already started
@@ -45,7 +45,7 @@ GLRenderer *GLSurface::getRenderer() {
 
 void GLSurface::surfaceCreated(ANativeWindow *window) {
     pthread_mutex_lock(&mLock);
-    LOGE("surfaceCreated %d",mRenderThreadStarted);
+    LOGI("surfaceCreated %d",mRenderThreadStarted);
     this->window=window;
     mSurfaceEvent=SURFACE_EVENT_CREATED;
     pthread_cond_signal(&mCond);
@@ -120,12 +120,12 @@ void GLSurface::renderLoop() {
                     EGLCore* egl=new EGLCore();
                     egl->init();
                     mSurface=new WindowSurface(egl,window);
-                    LOGE("makeCurrent before");
+                    LOGI("makeCurrent before");
                     mSurface->makeCurrent();
-                    LOGE("makeCurrent after");
-                    LOGE("surfaceCreated before");
+                    LOGI("makeCurrent after");
+                    LOGI("surfaceCreated before");
                     mRenderer->surfaceCreated();
-                    LOGE("surfaceCreated after");
+                    LOGI("surfaceCreated after");
                     pthread_cond_signal(&mCond);
                 }
                 break;
@@ -141,10 +141,10 @@ void GLSurface::renderLoop() {
                 mSurfaceEvent=SURFACE_EVENT_NONE;
                 releaseSurface();
                 //GL THREAD 进入等待状态，渲染线程依旧存在，当下次surfaceCreate时无须重启渲染线程
-                LOGE("SURFACE_EVENT_DESTROYED before");
+                LOGI("SURFACE_EVENT_DESTROYED before");
                 pthread_cond_wait(&mCond,&mLock);
                 mWakeUpFromDestoryed = true;
-                LOGE("SURFACE_EVENT_DESTROYED after");
+                LOGI("SURFACE_EVENT_DESTROYED after");
                 break;
         }
 
@@ -155,22 +155,22 @@ void GLSurface::renderLoop() {
             while (!mRunnables->empty()){
                 Runnable* runnable=mRunnables->front();
                 mRunnables->pop();
-                LOGE("GLSurface before run");
+                LOGI("GLSurface before run");
                 runnable->run();
                 delete runnable;
                 runnable= NULL;
-                LOGE("GLSurface after run");
+                LOGI("GLSurface after run");
             }
             mSurface->makeCurrent();
-            LOGE("before onDrawFrame");
+            LOGI("before onDrawFrame");
             mRenderer->onDrawFrame();
-            LOGE("after onDrawFrame");
+            LOGI("after onDrawFrame");
             mSurface->swapBuffers();
         }
         if (mRenderMode == RENDER_MODE_WHEN_DIRTY && !mKillRendererThread&& !mWakeUpFromDestoryed){
-            LOGE("before pthread_cond_wait");
+            LOGI("before pthread_cond_wait");
             pthread_cond_wait(&mCond,&mLock);
-            LOGE("after pthread_cond_wait");
+            LOGI("after pthread_cond_wait");
         }
         //LOGE("GL thread next loop");
         pthread_mutex_unlock(&mLock);

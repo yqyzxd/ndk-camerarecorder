@@ -3,7 +3,8 @@
 
 #define LOG_TAG "Texture"
 
-Texture::Texture() {
+Texture::Texture(GLenum target) {
+	this->target=target;
 }
 
 Texture::~Texture() {
@@ -25,17 +26,17 @@ bool Texture::createTexture() {
 void Texture::updateTexImage(void* pixels, int frameWidth, int frameHeight) {
 	if (pixels) {
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureId);
+		glBindTexture(target, textureId);
 		if (checkGlError("glBindTexture")) {
 			return;
 		}
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		glTexImage2D(target, 0, GL_RGBA, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	}
 }
 
 bool Texture::bindTexture(GLint uniformSampler) {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	glBindTexture(target, textureId);
 	if (checkGlError("glBindTexture")) {
 		return false;
 	}
@@ -45,11 +46,11 @@ bool Texture::bindTexture(GLint uniformSampler) {
 
 int Texture::initTexture() {
 	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(target, textureId);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	return 1;
 }
 

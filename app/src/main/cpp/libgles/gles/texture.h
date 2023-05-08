@@ -7,12 +7,14 @@
 class Texture {
 private:
 	GLuint textureId;
-
+	GLenum target;//GL_TEXTURE_2D or GL_TEXTURE_EXTERNAL_OES
 	int initTexture();
 
 	bool checkGlError(const char* op);
 public:
-	Texture();
+	Texture(GLenum target);
+	Texture(): Texture(GL_TEXTURE_2D){};
+
 	virtual ~Texture();
 	GLuint getTextureId();
 	bool createTexture();

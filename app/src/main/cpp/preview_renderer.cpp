@@ -47,7 +47,7 @@ void PreviewRenderer::surfaceCreated() {
     mCaller->startPreview(mTexture->getTextureId());
 
 
-    mScreenFilter=new ScreenFilter(base_vertex,base_fragment);
+    mScreenFilter=new ScreenFilter(mTextureHeight,mTextureWidth);
 }
 
 void PreviewRenderer::surfaceChanged(int width, int height) {

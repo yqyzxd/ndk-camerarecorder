@@ -22,10 +22,10 @@ class CameraPreviewActivity  : AppCompatActivity() {
 
         val params=previewView.layoutParams
         params.width=windowManager.defaultDisplay.width
-        params.height=windowManager.defaultDisplay.height
+        params.height=windowManager.defaultDisplay.width
+        previewView.layoutParams=params
 
-
-        val camera=VideoCamera()
+        val camera=VideoCamera(this)
         scheduler=CameraPreviewScheduler(previewView,camera)
 
         binding.btnSwitch.setOnClickListener {

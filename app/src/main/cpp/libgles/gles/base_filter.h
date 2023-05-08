@@ -6,12 +6,13 @@
 #define NDK_PNG_BASE_FILTER_H
 
 #include <GLES2/gl2.h>
+#include "gl_shaders.h"
 
 class BaseFilter {
 
 public:
     BaseFilter(const char *vertexSource, const char *fragmentSource);
-
+    BaseFilter(): BaseFilter(base_vertex,base_fragment){}
     virtual ~BaseFilter() {};
 
     virtual void onReady(int width, int height);

@@ -1,11 +1,13 @@
 package com.wind.ndk.camera
 
+import android.app.Activity
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.hardware.Camera.CameraInfo
+import android.view.Surface
 
-class VideoCamera {
+class VideoCamera(private val mActivity:Activity) {
 
     private var mCamera: Camera? = null
     private var mSurfaceTexture: SurfaceTexture? = null
@@ -25,6 +27,7 @@ class VideoCamera {
             parameters?.apply {
                 val supportedFormats = supportedPreviewFormats
                 if (supportedFormats.contains(ImageFormat.NV21)) {
+                    //NV21其实是“YUV420SP的格式，即UV是interleaved（交错UVUVUV）的存放”
                     previewFormat = ImageFormat.NV21
                 } else {
                     throw CameraException("preview format error")
@@ -50,12 +53,36 @@ class VideoCamera {
 
             }
             mCamera?.parameters=parameters
-
-
+            setCameraDisplayOrientation(cameraFacingId)
             return CameraInfo(mVideoWidth,mVideoHeight, getCameraFacing(cameraFacingId))
         } catch (e: Exception) {
            throw CameraException(e.message?:"")
         }
+    }
+
+    //渲染出的画面是旋转的。
+    // 解决方式一：通过Camera.setDisplayOrientation设置正确的旋转角度。设置Camera旋转角度，这样通过surfaceTexture的getTransformMatrix获取到的matrix就是带有旋转角度的
+    //解决方式二：计算出旋转角度，设置正确的纹理坐标。
+    private fun setCameraDisplayOrientation(cameraFacingId: Int) {
+        val info = CameraInfo()
+        Camera.getCameraInfo(cameraFacingId, info)
+        val rotation: Int = mActivity.windowManager.defaultDisplay.rotation
+        var degrees = 0
+        when (rotation) {
+            Surface.ROTATION_0 -> degrees = 0
+            Surface.ROTATION_90 -> degrees = 90
+            Surface.ROTATION_180 -> degrees = 180
+            Surface.ROTATION_270 -> degrees = 270
+        }
+
+        var result: Int
+        if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360
+            result = (360 - result) % 360 // compensate the mirror 前置摄像头镜像
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360
+        }
+        mCamera?.setDisplayOrientation(result)
     }
 
 

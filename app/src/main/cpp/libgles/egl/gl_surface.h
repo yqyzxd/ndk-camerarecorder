@@ -45,6 +45,9 @@ private:
     //surface事件
     SurfaceEvent mSurfaceEvent= SURFACE_EVENT_NONE;
 
+    //渲染环境是否准备就绪
+    bool mRenderPrepared;
+
     int mSurfaceWidth;
     int mSurfaceHeight;
     ANativeWindow* window;

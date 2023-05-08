@@ -24,10 +24,15 @@ void CameraFilter::getLocation() {
 
 void CameraFilter::inflateLocation(GLuint textureId) {
     BaseFboFilter::inflateLocation(textureId);
-    if (matrix){
-        glUniformMatrix4fv(uMatrixLocation,1, GL_FALSE,matrix);
+    if (matrix== nullptr){
+        matrix=new GLfloat[16]{
+          1,0,0,0,
+          0,1,0,0,
+          0,0,1,0,
+          0,0,0,1,
+        };
     }
-
+    glUniformMatrix4fv(uMatrixLocation,1, GL_FALSE,matrix);
 }
 
 void CameraFilter::setMatrix(GLfloat *matrix) {

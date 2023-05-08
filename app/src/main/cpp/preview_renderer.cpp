@@ -3,7 +3,7 @@
 //
 
 #include "preview_renderer.h"
-
+#include "gles/gl_utils.h"
 
 
 #define  LOG_TAG "PreviewRenderer"
@@ -44,8 +44,9 @@ void PreviewRenderer::surfaceCreated() {
     CameraInfo* cameraInfo=mCaller->configCamera(mCameraFacingId);
     mTextureWidth=cameraInfo->previewWidth;
     mTextureHeight=cameraInfo->previewHeight;
+    checkGlError("createTexture");
     mCaller->startPreview(mTexture->getTextureId());
-
+    checkGlError("after startPreview");
 
     mScreenFilter=new ScreenFilter(mTextureHeight,mTextureWidth);
 }
@@ -56,7 +57,7 @@ void PreviewRenderer::surfaceChanged(int width, int height) {
 }
 
 void PreviewRenderer::onDrawFrame() {
-    LOGI("onDrawFrame");
+    checkGlError("onDrawFrame");
 
     int textureId=mCameraFilter->onDrawFrame(mTexture->getTextureId());
     mScreenFilter->onDrawFrame(textureId);
@@ -70,6 +71,7 @@ void PreviewRenderer::surfaceDestroyed() {
 }
 
 void PreviewRenderer::updateTexImage() {
+    //checkGlError("updateTexImage");
     GLfloat* matrix=mCaller->updateTexImage();
     mCameraFilter->setMatrix(matrix);
 }

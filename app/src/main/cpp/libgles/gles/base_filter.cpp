@@ -26,6 +26,7 @@ void BaseFilter::getLocation() {
     mCoordLocation= glGetAttribLocation(mProgram,"a_Coordinate");
     mTextureLocation= glGetUniformLocation(mProgram,"u_Texture");
     LOGI("mPositionLocation:%d,mCoordLocation:%d,mTextureLocation:%d",mPositionLocation,mCoordLocation,mTextureLocation);
+    checkGlError("getLocation");
 }
 
 GLuint BaseFilter::onDrawFrame(GLuint textureId) {

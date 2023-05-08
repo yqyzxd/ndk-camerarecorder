@@ -7,6 +7,7 @@
 
 #define LOG_TAG "GLSurface"
 GLSurface::GLSurface() {
+    mRenderPrepared= false;
     mRenderMode=RENDER_MODE_WHEN_DIRTY;
     mRunnables=new std::queue<Runnable*>();
     pthread_mutex_init(&mLock,NULL);
@@ -45,6 +46,8 @@ GLRenderer *GLSurface::getRenderer() {
 
 void GLSurface::surfaceCreated(ANativeWindow *window) {
     pthread_mutex_lock(&mLock);
+    while (!mRenderThreadStarted){
+    }
     LOGI("surfaceCreated %d",mRenderThreadStarted);
     this->window=window;
     mSurfaceEvent=SURFACE_EVENT_CREATED;
@@ -134,10 +137,11 @@ void GLSurface::renderLoop() {
                 if (mRenderer){
                     mSurface->makeCurrent();
                     mRenderer->surfaceChanged(mSurfaceWidth,mSurfaceHeight);
-
+                    mRenderPrepared= true;
                 }
                 break;
             case SURFACE_EVENT_DESTROYED:
+                mRenderPrepared= false;
                 mSurfaceEvent=SURFACE_EVENT_NONE;
                 releaseSurface();
                 //GL THREAD 进入等待状态，渲染线程依旧存在，当下次surfaceCreate时无须重启渲染线程
@@ -151,7 +155,7 @@ void GLSurface::renderLoop() {
 
 
 
-        if (mRenderer && mSurface){
+        if (mRenderer && mSurface&& mRenderPrepared){
             while (!mRunnables->empty()){
                 Runnable* runnable=mRunnables->front();
                 mRunnables->pop();

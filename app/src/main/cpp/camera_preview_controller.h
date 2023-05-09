@@ -32,13 +32,16 @@ public:
     void onSurfaceDestroyed();
 
     static void updateTexImage(void *ctx);
+    static void innerSwitchCamera(void *ctx);
 
     void onFrameAvailable();
+
+    void switchCamera(int cameraFacingId);
 
 private:
 
     GLSurface* glSurface;
-
+    int cameraFacingId;
 
 };
 

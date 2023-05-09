@@ -2,7 +2,9 @@
 // Created by 史浩 on 2023/3/29.
 //
 
+#include <unistd.h>
 #include "gl_surface.h"
+#include "gles/gl_utils.h"
 
 
 #define LOG_TAG "GLSurface"
@@ -96,10 +98,14 @@ void GLSurface::requestRender() {
 
 void GLSurface::dealloc() {
     LOGE("dealloc");
+    while (mRenderPrepared){
+        surfaceDestroyed();
+        usleep(0.5*(1e6));
+    }
     pthread_mutex_lock(&mLock);
-    releaseSurface();
-    delete mRenderer;
-    mRenderer=NULL;
+   // releaseSurface();
+    //delete mRenderer;
+    //mRenderer=NULL;
     mKillRendererThread= true;
     pthread_cond_signal(&mCond);
     pthread_mutex_unlock(&mLock);
@@ -159,14 +165,16 @@ void GLSurface::renderLoop() {
             while (!mRunnables->empty()){
                 Runnable* runnable=mRunnables->front();
                 mRunnables->pop();
-                LOGI("GLSurface before run");
+                LOGI("before runnable  run");
+                checkGlError("runnable");
                 runnable->run();
                 delete runnable;
-                runnable= NULL;
-                LOGI("GLSurface after run");
+                runnable= nullptr;
+                LOGI("after runnable  run");
             }
             mSurface->makeCurrent();
             LOGI("before onDrawFrame");
+            checkGlError("onDrawFrame");
             mRenderer->onDrawFrame();
             LOGI("after onDrawFrame");
             mSurface->swapBuffers();
@@ -184,6 +192,8 @@ void GLSurface::renderLoop() {
 void GLSurface::releaseSurface() {
     if (mRenderer){
         mRenderer->surfaceDestroyed();
+        delete mRenderer;
+        mRenderer= nullptr;
     }
     if (mSurface){
         mSurface->release();

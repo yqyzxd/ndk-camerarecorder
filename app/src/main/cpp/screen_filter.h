@@ -12,12 +12,14 @@ private:
     int mTextureWidth;
     int mTextureHeight;
 public:
-    ScreenFilter(int textureWidth,int textureHeight);
+    ScreenFilter();
     ~ScreenFilter();
     //void updateTexImage(GLuint textureId,void* bytes,int width,int height);
 
     //为了纹理与视口的比例保持一致（这样才能避免纹理被拉伸），需要裁剪纹理坐标，因此重写
     GLfloat *getTextureData() override;
+
+    void setTextureSize(int width, int height);
 };
 
 

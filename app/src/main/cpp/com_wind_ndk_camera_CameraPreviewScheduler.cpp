@@ -31,6 +31,8 @@ JNIEXPORT void JNICALL
 Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnSurfaceDestroyed(JNIEnv* env,jobject thiz) {
     if (controller){
         controller->onSurfaceDestroyed();
+        delete controller;
+        controller= nullptr;
     }
 }
 
@@ -40,4 +42,20 @@ Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnFrameAvailable(JNIEnv *e
         controller->onFrameAvailable();
     }
 
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeSwitchCamera(JNIEnv *env, jobject thiz,jint cameraFacingId) {
+    if (controller){
+        controller->switchCamera(cameraFacingId);
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeRelease(JNIEnv *env, jobject thiz) {
+    /*if (controller){
+        delete controller;
+        controller= nullptr;
+    }*/
 }

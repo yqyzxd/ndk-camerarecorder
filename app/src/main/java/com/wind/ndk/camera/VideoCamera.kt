@@ -53,6 +53,9 @@ class VideoCamera(private val mActivity:Activity) {
 
             }
             mCamera?.parameters=parameters
+            mCamera?.setErrorCallback { error, _ ->
+                println("ErrorCallback error:$error")
+            }
             setCameraDisplayOrientation(cameraFacingId)
             return CameraInfo(mVideoWidth,mVideoHeight, getCameraFacing(cameraFacingId))
         } catch (e: Exception) {
@@ -96,7 +99,7 @@ class VideoCamera(private val mActivity:Activity) {
         return supported
     }
 
-    private fun releaseCamera() {
+     fun releaseCamera() {
         mSurfaceTexture?.release()
         mSurfaceTexture = null
 

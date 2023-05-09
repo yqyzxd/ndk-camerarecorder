@@ -29,8 +29,13 @@ class CameraPreviewActivity  : AppCompatActivity() {
         scheduler=CameraPreviewScheduler(previewView,camera)
 
         binding.btnSwitch.setOnClickListener {
-
+            scheduler.switchCamera()
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scheduler.release()
     }
 }

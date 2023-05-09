@@ -30,6 +30,8 @@ public:
     void onDrawFrame() override;
 
     void updateTexImage();
+
+    void startPreview(int cameraFacingId);
 };
 
 

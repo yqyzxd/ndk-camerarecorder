@@ -21,6 +21,8 @@ public:
 
     GLfloat* updateTexImage();
 
+    void releaseCamera();
+
 private:
     JavaVM* javaVM;
     jobject jobj;

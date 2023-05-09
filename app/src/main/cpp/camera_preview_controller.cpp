@@ -13,8 +13,15 @@ void CameraPreviewController::updateTexImage(void *ctx) {
 
 }
 
-CameraPreviewController::CameraPreviewController(JavaVM *javaVM, jobject jobj,int cameraFacingId) {
+void CameraPreviewController::innerSwitchCamera(void *ctx) {
+    CameraPreviewController* controller= static_cast<CameraPreviewController *>(ctx);
+    PreviewRenderer*renderer= dynamic_cast<PreviewRenderer *>(controller->glSurface->getRenderer());
+    renderer->startPreview(controller->cameraFacingId);
+}
 
+
+CameraPreviewController::CameraPreviewController(JavaVM *javaVM, jobject jobj,int cameraFacingId) {
+    this->cameraFacingId=cameraFacingId;
     glSurface=new GLSurface;
     glSurface->setRenderer(new PreviewRenderer(javaVM,jobj,cameraFacingId));
 }
@@ -39,11 +46,22 @@ void CameraPreviewController::onSurfaceChanged(int width, int height) {
 void CameraPreviewController::onSurfaceDestroyed() {
     LOGI("surfaceDestroyed");
     glSurface->surfaceDestroyed();
+
+
+
+
 }
 
 void CameraPreviewController::onFrameAvailable() {
     LOGI("onFrameAvailable");
     glSurface->queueEvent(new Runnable(updateTexImage,this));
+
+}
+
+void CameraPreviewController::switchCamera(int cameraFacingId) {
+    //todo 切换相机最好先暂定渲染onDrawFrame
+    this->cameraFacingId=cameraFacingId;
+    glSurface->queueEvent(new Runnable(innerSwitchCamera,this));
 
 }
 

@@ -92,3 +92,22 @@ GLfloat *CameraPreviewSchedulerCaller::updateTexImage() {
 
     return result;
 }
+
+void CameraPreviewSchedulerCaller::releaseCamera() {
+    JNIEnv* env;
+    if(javaVM->AttachCurrentThread(&env,0)!=JNI_OK){
+        LOGE("AttachCurrentThread failed");
+        return;
+    }
+    jclass jclazz=env->GetObjectClass(jobj);
+    jmethodID  releaseCameraMethodID=env->GetMethodID(jclazz,"releaseCameraFromNative","()V");
+
+    env->CallVoidMethod(jobj,releaseCameraMethodID);
+
+    if(javaVM->DetachCurrentThread()!=JNI_OK){
+        LOGE("DetachCurrentThread failed");
+    }
+
+
+
+}

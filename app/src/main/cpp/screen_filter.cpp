@@ -3,12 +3,17 @@
 //
 
 #include "screen_filter.h"
-ScreenFilter::ScreenFilter(int textureWidth,int textureHeight): BaseFilter() {
-    this->mTextureWidth=textureWidth;
-    this->mTextureHeight=textureHeight;
+ScreenFilter::ScreenFilter(): BaseFilter() {
+
 }
 
 ScreenFilter::~ScreenFilter() {
+
+}
+
+void ScreenFilter::setTextureSize(int textureWidth, int textureHeight) {
+    this->mTextureWidth=textureWidth;
+    this->mTextureHeight=textureHeight;
 
 }
 
@@ -45,3 +50,5 @@ GLfloat *ScreenFilter::getTextureData() {
             1-xOffset, yOffset,
     };
 }
+
+

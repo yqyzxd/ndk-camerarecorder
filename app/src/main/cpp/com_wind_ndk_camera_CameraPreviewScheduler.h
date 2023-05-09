@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     com_wind_ndk_camera_CameraPreviewScheduler
  * Method:    nativeOnSurfaceCreated
- * Signature: (Landroid/view/Surface;)V
+ * Signature: (Landroid/view/Surface;I)V
  */
 JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnSurfaceCreated
-  (JNIEnv *, jobject, jobject,jint);
+  (JNIEnv *, jobject, jobject, jint);
 
 /*
  * Class:     com_wind_ndk_camera_CameraPreviewScheduler
@@ -31,8 +31,29 @@ JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnS
 JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnSurfaceDestroyed
   (JNIEnv *, jobject);
 
+/*
+ * Class:     com_wind_ndk_camera_CameraPreviewScheduler
+ * Method:    nativeOnFrameAvailable
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnFrameAvailable
+  (JNIEnv *, jobject);
 
-JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeOnFrameAvailable(JNIEnv*, jobject);
+/*
+ * Class:     com_wind_ndk_camera_CameraPreviewScheduler
+ * Method:    nativeRelease
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeRelease
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_wind_ndk_camera_CameraPreviewScheduler
+ * Method:    nativeSwitchCamera
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeSwitchCamera
+  (JNIEnv *, jobject,jint);
 
 #ifdef __cplusplus
 }

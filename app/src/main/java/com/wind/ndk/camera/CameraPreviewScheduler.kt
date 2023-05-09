@@ -14,16 +14,27 @@ class CameraPreviewScheduler(private val mSurfaceView:CameraPreviewView, private
     override fun onSurfaceCreated(surface: Surface) {
         nativeOnSurfaceCreated(surface,mCameraFacingId)
     }
-
-
-
     override fun onSurfaceChanged(width: Int, height: Int) {
         nativeOnSurfaceChanged(width,height)
     }
-
     override fun onSurfaceDestroyed() {
         nativeOnSurfaceDestroyed()
     }
+    fun switchCamera(){
+       val cameraId= if ( mCameraFacingId == Camera.CameraInfo.CAMERA_FACING_FRONT){
+           Camera.CameraInfo.CAMERA_FACING_BACK
+       }else{
+           Camera.CameraInfo.CAMERA_FACING_FRONT
+       }
+        nativeSwitchCamera(cameraId)
+    }
+
+
+
+    fun release() {
+        nativeRelease()
+    }
+
 
 
     fun configCameraFromNative(cameraFacingId:Int):CameraInfo{
@@ -36,7 +47,11 @@ class CameraPreviewScheduler(private val mSurfaceView:CameraPreviewView, private
         mCamera.startPreview()
     }
     fun updateTexImageFromNative():FloatArray{
-        return mCamera.updateTexImage();
+        return mCamera.updateTexImage()
+    }
+
+    fun releaseCameraFromNative(){
+        return mCamera.releaseCamera()
     }
 
     override fun onFrameAvailable() {
@@ -49,6 +64,9 @@ class CameraPreviewScheduler(private val mSurfaceView:CameraPreviewView, private
     private external fun nativeOnSurfaceChanged(width: Int, height: Int)
     private external fun nativeOnSurfaceDestroyed()
     private external fun nativeOnFrameAvailable()
+
+    private external fun nativeRelease()
+    private external fun nativeSwitchCamera(cameraFacingId: Int)
 
     companion object{
         init {

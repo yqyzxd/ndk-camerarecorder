@@ -38,18 +38,33 @@ PreviewRenderer::~PreviewRenderer() {
 }
 
 void PreviewRenderer::surfaceCreated() {
+
     mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
     mTexture->createTexture();
     mCameraFilter=new CameraFilter();
-    CameraInfo* cameraInfo=mCaller->configCamera(mCameraFacingId);
+    mScreenFilter=new ScreenFilter();
+    startPreview(mCameraFacingId);
+    checkGlError("after startPreview");
+
+}
+
+
+void PreviewRenderer::startPreview(int cameraFacingId) {
+    mCaller->releaseCamera();
+    CameraInfo* cameraInfo=mCaller->configCamera(cameraFacingId);
     mTextureWidth=cameraInfo->previewWidth;
     mTextureHeight=cameraInfo->previewHeight;
     checkGlError("createTexture");
     mCaller->startPreview(mTexture->getTextureId());
-    checkGlError("after startPreview");
 
-    mScreenFilter=new ScreenFilter(mTextureHeight,mTextureWidth);
+    if (mCameraFacingId==1){ //前置摄像头
+        mScreenFilter->setTextureSize(mTextureHeight,mTextureWidth);
+    }else{
+        mScreenFilter->setTextureSize(mTextureWidth,mTextureHeight);
+    }
+
 }
+
 
 void PreviewRenderer::surfaceChanged(int width, int height) {
     mCameraFilter->onReady(width,height);
@@ -66,8 +81,12 @@ void PreviewRenderer::onDrawFrame() {
 
 }
 void PreviewRenderer::surfaceDestroyed() {
+
     mCameraFilter->dealloc();
     mScreenFilter->dealloc();
+
+    //通知java层释放camera
+    mCaller->releaseCamera();
 }
 
 void PreviewRenderer::updateTexImage() {
@@ -75,3 +94,5 @@ void PreviewRenderer::updateTexImage() {
     GLfloat* matrix=mCaller->updateTexImage();
     mCameraFilter->setMatrix(matrix);
 }
+
+

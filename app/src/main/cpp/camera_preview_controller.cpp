@@ -8,6 +8,7 @@ void CameraPreviewController::updateTexImage(void *ctx) {
     LOGI("before updateTexImage");
     CameraPreviewController* controller= static_cast<CameraPreviewController *>(ctx);
     PreviewRenderer*renderer= dynamic_cast<PreviewRenderer *>(controller->glSurface->getRenderer());
+    LOGI("pthread_self:%d",pthread_self());
     renderer->updateTexImage();
     LOGI("after updateTexImage");
 
@@ -41,7 +42,6 @@ void CameraPreviewController::onSurfaceCreated(ANativeWindow *window) {
 }
 
 void CameraPreviewController::onSurfaceChanged(int width, int height) {
-    LOGI("surfaceChanged");
     glSurface->surfaceChanged(width,height);
 }
 

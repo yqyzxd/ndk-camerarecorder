@@ -167,19 +167,25 @@ void createFrameBuffers(GLuint* frameBuffers, GLuint* textures, int width, int h
     glGenTextures(size,textures);
 
     for (int i = 0; i < size; ++i) {
-        // 让fbo与纹理发生关系
+
         glBindFramebuffer(GL_FRAMEBUFFER,frameBuffers[i]);
         glBindTexture(GL_TEXTURE_2D,textures[i]);
-        //创建一个没有像素的texture
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,NULL);
+
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
 
 
+        //把纹理绑定到fbo
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                textures[i], 0);
+        //创建一个没有像素的texture
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,NULL);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE){
+            LOGE("glFramebufferTexture2D error");
+        }
 
         glBindTexture(GL_TEXTURE_2D,0);
         glBindFramebuffer(GL_FRAMEBUFFER,0);

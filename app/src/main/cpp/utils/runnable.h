@@ -7,7 +7,7 @@
 class Runnable {
 public:
     Runnable(void (*runFp)(void*),void* params):runFp(runFp),params(params){}
-
+    ~Runnable(){ runFp = nullptr;}
     void run(){
         runFp(params);
     }

@@ -10,7 +10,6 @@
 PreviewRenderer::PreviewRenderer(JavaVM*javaVm,jobject jobj,int cameraFacingId) {
     mCameraFacingId=cameraFacingId;
     mCaller=new CameraPreviewSchedulerCaller(javaVm,jobj);
-
 }
 
 PreviewRenderer::~PreviewRenderer() {
@@ -39,13 +38,7 @@ PreviewRenderer::~PreviewRenderer() {
 
 void PreviewRenderer::surfaceCreated() {
 
-    mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
-    mTexture->createTexture();
-    mCameraFilter=new CameraFilter();
-    mScreenFilter=new ScreenFilter();
-    LOGI("before startPreview");
-    startPreview(mCameraFacingId);
-    LOGI("after startPreview");
+
 
 }
 
@@ -55,6 +48,7 @@ void PreviewRenderer::startPreview(int cameraFacingId) {
     CameraInfo* cameraInfo=mCaller->configCamera(cameraFacingId);
     mTextureWidth=cameraInfo->previewWidth;
     mTextureHeight=cameraInfo->previewHeight;
+    mCameraFilter=new CameraFilter();
     checkGlError("createTexture");
     mCaller->startPreview(mTexture->getTextureId());
 
@@ -68,15 +62,29 @@ void PreviewRenderer::startPreview(int cameraFacingId) {
 
 
 void PreviewRenderer::surfaceChanged(int width, int height) {
+    mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
+    mTexture->createTexture();
+
+    mScreenFilter=new ScreenFilter();
+    LOGI("before startPreview");
+    startPreview(mCameraFacingId);
+    checkGlError("startPreview");
+    LOGI("after startPreview");
+
     mCameraFilter->onReady(width,height);
     mScreenFilter->onReady(width,height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(1,1,1,1);
+    checkGlError("glClearColor");
 }
 
 void PreviewRenderer::onDrawFrame() {
     checkGlError("onDrawFrame");
-
     int textureId=mCameraFilter->onDrawFrame(mTexture->getTextureId());
+    checkGlError("mCameraFilter onDrawFrame");
     mScreenFilter->onDrawFrame(textureId);
+    checkGlError("mScreenFilter onDrawFrame");
+
 
 
 
@@ -91,7 +99,8 @@ void PreviewRenderer::surfaceDestroyed() {
 }
 
 void PreviewRenderer::updateTexImage() {
-    //checkGlError("updateTexImage");
+
+    checkGlError("updateTexImage");
     GLfloat* matrix=mCaller->updateTexImage();
     mCameraFilter->setMatrix(matrix);
 }

@@ -32,33 +32,39 @@ void BaseFilter::getLocation() {
 GLuint BaseFilter::onDrawFrame(GLuint textureId) {
     //1， 设置视窗
     glViewport(0, 0, mWidth, mHeight);
+    checkGlError("glViewport");
     //2，使用着色器程序
     glUseProgram(mProgram);
-
+    checkGlError("glUseProgram");
 
     inflateLocation(textureId);
-
+    checkGlError("inflateLocation");
     glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+    checkGlError("glDrawArrays");
+
+    glDisableVertexAttribArray(mPositionLocation);
+    glDisableVertexAttribArray(mCoordLocation);
+    glBindTexture(textureId,0);
     return textureId;
 }
 
 void BaseFilter::inflateLocation(GLuint textureId) {
     //1，顶点数据
-    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, false, 0, getVertexData());//传值
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, getVertexData());//传值
     //使能顶点缓冲区
     glEnableVertexAttribArray(mPositionLocation);
-
+    checkGlError("glVertexAttribPointer mPositionLocation");
     //2，纹理坐标
-    glVertexAttribPointer(mCoordLocation, 2, GL_FLOAT, false, 0, getTextureData());
+    glVertexAttribPointer(mCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, getTextureData());
     glEnableVertexAttribArray(mCoordLocation);
-
+    checkGlError("glVertexAttribPointer mCoordLocation");
     //激活图层
     glActiveTexture(GL_TEXTURE0);
     //绑定
     glBindTexture(getTextureTarget(), textureId);
     //传递参数
     glUniform1i(mTextureLocation, 0);
-
+    checkGlError("glUniform1i mTextureLocation");
 }
 GLuint BaseFilter::getTextureTarget() {
     return GL_TEXTURE_2D;

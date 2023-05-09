@@ -5,9 +5,8 @@
 #ifndef NDK_CAMERARECORDER_CAMERA_FILTER_H
 #define NDK_CAMERARECORDER_CAMERA_FILTER_H
 
+#include "utils/log.h"
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 #include "gles/base_fbo_filter.h"
 
 
@@ -35,21 +34,25 @@ class CameraFilter : public BaseFboFilter{
 private:
     GLuint uMatrixLocation;
     GLfloat* matrix = nullptr;
+
 public:
 
     CameraFilter();
     ~CameraFilter();
-    virtual GLuint getTextureTarget();
+
     /**获取AttributeLocation，UniformLocation等*/
     virtual void getLocation() override;
     /**填充AttributeLocation，UniformLocation等*/
     virtual void inflateLocation(GLuint textureId) override;
+
+    virtual GLenum getTextureTarget() override;
     /**获取顶点坐标*/
     //virtual GLfloat* getVertexData() override;
     /**获取纹理坐标*/
    // virtual GLfloat* getTextureData() override;
 
     void setMatrix(GLfloat* matrix);
+
 };
 
 

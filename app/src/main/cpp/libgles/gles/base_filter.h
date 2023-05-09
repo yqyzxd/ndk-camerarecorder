@@ -6,6 +6,7 @@
 #define NDK_PNG_BASE_FILTER_H
 
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include "gl_shaders.h"
 
 class BaseFilter {
@@ -22,7 +23,7 @@ public:
     virtual void dealloc();
 
     /**纹理类型 如GL_TEXTURE_2D*/
-    virtual GLuint getTextureTarget();
+    virtual GLenum getTextureTarget();
 
     /**获取AttributeLocation，UniformLocation等*/
     virtual void getLocation();

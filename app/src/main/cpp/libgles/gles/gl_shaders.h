@@ -5,7 +5,7 @@
 #ifndef NDK_CAMERARECORDER_GL_SHADERS_H
 #define NDK_CAMERARECORDER_GL_SHADERS_H
 #ifdef __cplusplus
-extern "C" {;
+extern "C" {
 #endif
 
 #define SHADER_STRING(s) #s

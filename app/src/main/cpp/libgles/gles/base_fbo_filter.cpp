@@ -14,6 +14,7 @@ BaseFboFilter::~BaseFboFilter(){
 
 }
 
+
 void BaseFboFilter::onReady(int width, int height) {
     BaseFilter::onReady(width,height);
 
@@ -30,6 +31,7 @@ GLuint BaseFboFilter::onDrawFrame(GLuint textureId) {
    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,fboTextureId, 0);
   //  checkGlError("glFramebufferTexture2D");
     BaseFilter::onDrawFrame(textureId);
+    checkGlError("after BaseFboFilter onDrawFrame");
     glBindTexture(GL_TEXTURE_2D, 0);
  //   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER,0);

@@ -58,7 +58,7 @@ private:
     //渲染模式
     RenderMode mRenderMode=RENDER_MODE_CONTINUOUSLY;
     std::queue<Runnable*>* mRunnables= nullptr;
-    bool mWakeUpFromDestoryed= false;
+    bool mWakeUpFromDestroyed= false;
 
 
 private:

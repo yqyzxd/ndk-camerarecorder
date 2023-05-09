@@ -5,7 +5,9 @@ import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.hardware.Camera.CameraInfo
+import android.util.Log
 import android.view.Surface
+import javax.microedition.khronos.opengles.GL11Ext
 
 @Suppress("DEPRECATION")
 class VideoCamera(private val mActivity:Activity) {
@@ -111,9 +113,9 @@ class VideoCamera(private val mActivity:Activity) {
     }
 
     fun setPreviewTexture(textureId: Int) {
-
+        mSurfaceTexture= SurfaceTexture(textureId)
         mCamera?.apply {
-            mSurfaceTexture= SurfaceTexture(textureId)
+
             setPreviewTexture(mSurfaceTexture)
             mSurfaceTexture?.setOnFrameAvailableListener {
                 mCallback?.onFrameAvailable()
@@ -127,11 +129,11 @@ class VideoCamera(private val mActivity:Activity) {
     }
 
     companion object {
-        val VIDEO_WIDTH_640 = 640
-        val VIDEO_HEIGHT_480 = 480
+        const val VIDEO_WIDTH_640 = 640
+        const val VIDEO_HEIGHT_480 = 480
 
-        val VIDEO_WIDTH_1280 = 1280
-        val VIDEO_HEIGHT_720 = 720
+        const val VIDEO_WIDTH_1280 = 1280
+        const val VIDEO_HEIGHT_720 = 720
 
         @JvmStatic
         fun getCameraFacing(cameraId:Int):Int{
@@ -156,7 +158,9 @@ class VideoCamera(private val mActivity:Activity) {
             0f,0f,1f,0f,
             0f,0f,0f,1f,
             )
+        Log.e("mSurfaceTexture","before mSurfaceTexture?.updateTexImage()")
         mSurfaceTexture?.updateTexImage()
+        Log.e("mSurfaceTexture","after mSurfaceTexture?.updateTexImage()")
         mSurfaceTexture?.getTransformMatrix(arr)
 
         return arr

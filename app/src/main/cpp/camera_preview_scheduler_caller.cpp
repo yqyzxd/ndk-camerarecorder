@@ -76,15 +76,15 @@ GLfloat *CameraPreviewSchedulerCaller::updateTexImage() {
         LOGE("AttachCurrentThread failed");
         return nullptr;
     }
-    GLfloat * result= nullptr;
+    GLfloat * result;
     jclass jclazz=env->GetObjectClass(jobj);
     jmethodID  updateTexImageMethodID=env->GetMethodID(jclazz,"updateTexImageFromNative","()[F");
     LOGI("before call updateTexImageMethodID");
      jobject resultObj= static_cast<jfloatArray>(env->CallObjectMethod(jobj,
                                                                           updateTexImageMethodID));
-    LOGI("before cast jobj to jfloatArray");
+    LOGI("after call updateTexImageMethodID");
     jfloatArray jfloatArr= static_cast<jfloatArray>(resultObj);
-    LOGI("after cast jobj to jfloatArray");
+
     result=env->GetFloatArrayElements(jfloatArr,0);
     if(javaVM->DetachCurrentThread()!=JNI_OK){
         LOGE("DetachCurrentThread failed");

@@ -43,8 +43,9 @@ void PreviewRenderer::surfaceCreated() {
     mTexture->createTexture();
     mCameraFilter=new CameraFilter();
     mScreenFilter=new ScreenFilter();
+    LOGI("before startPreview");
     startPreview(mCameraFacingId);
-    checkGlError("after startPreview");
+    LOGI("after startPreview");
 
 }
 

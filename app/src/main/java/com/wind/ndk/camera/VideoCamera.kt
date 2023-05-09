@@ -7,6 +7,7 @@ import android.hardware.Camera
 import android.hardware.Camera.CameraInfo
 import android.view.Surface
 
+@Suppress("DEPRECATION")
 class VideoCamera(private val mActivity:Activity) {
 
     private var mCamera: Camera? = null

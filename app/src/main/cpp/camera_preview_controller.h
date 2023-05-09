@@ -42,7 +42,8 @@ private:
 
     GLSurface* glSurface;
     int cameraFacingId;
-
+    //正在切换相机
+    bool mSwitchingCamera;
 };
 
 

@@ -161,15 +161,13 @@ void GLSurface::renderLoop() {
 
 
 
-        if (mRenderer && mSurface&& mRenderPrepared){
+        if (mRenderPrepared){
             while (!mRunnables->empty()){
                 Runnable* runnable=mRunnables->front();
                 mRunnables->pop();
                 LOGI("before runnable  run");
-                checkGlError("runnable");
                 runnable->run();
                 delete runnable;
-                runnable= nullptr;
                 LOGI("after runnable  run");
             }
             mSurface->makeCurrent();

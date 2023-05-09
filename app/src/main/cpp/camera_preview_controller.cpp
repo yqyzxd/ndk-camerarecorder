@@ -17,10 +17,12 @@ void CameraPreviewController::innerSwitchCamera(void *ctx) {
     CameraPreviewController* controller= static_cast<CameraPreviewController *>(ctx);
     PreviewRenderer*renderer= dynamic_cast<PreviewRenderer *>(controller->glSurface->getRenderer());
     renderer->startPreview(controller->cameraFacingId);
+    controller->mSwitchingCamera= false;
 }
 
 
 CameraPreviewController::CameraPreviewController(JavaVM *javaVM, jobject jobj,int cameraFacingId) {
+    mSwitchingCamera= false;
     this->cameraFacingId=cameraFacingId;
     glSurface=new GLSurface;
     glSurface->setRenderer(new PreviewRenderer(javaVM,jobj,cameraFacingId));
@@ -45,6 +47,7 @@ void CameraPreviewController::onSurfaceChanged(int width, int height) {
 
 void CameraPreviewController::onSurfaceDestroyed() {
     LOGI("surfaceDestroyed");
+    mSwitchingCamera= true;
     glSurface->surfaceDestroyed();
 
 
@@ -53,13 +56,17 @@ void CameraPreviewController::onSurfaceDestroyed() {
 }
 
 void CameraPreviewController::onFrameAvailable() {
-    LOGI("onFrameAvailable");
-    glSurface->queueEvent(new Runnable(updateTexImage,this));
+    if (!mSwitchingCamera){
+        LOGI("onFrameAvailable");
+        glSurface->queueEvent(new Runnable(updateTexImage,this));
+    }
+
 
 }
 
 void CameraPreviewController::switchCamera(int cameraFacingId) {
-    //todo 切换相机最好先暂定渲染onDrawFrame
+    //切换相机时忽略onFrameAvailable，否则切换时可能出现画面渲染异常的情况
+    mSwitchingCamera= true;
     this->cameraFacingId=cameraFacingId;
     glSurface->queueEvent(new Runnable(innerSwitchCamera,this));
 

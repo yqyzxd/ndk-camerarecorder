@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.wind.ndk.camera.databinding.ActivityMainBinding
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.locks.ReentrantLock
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,7 +17,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val lock=ReentrantLock()
+        val cond=lock.newCondition();
+        cond.await()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

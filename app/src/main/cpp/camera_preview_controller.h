@@ -7,11 +7,11 @@
 
 #include <jni.h>
 #include <android/native_window.h>
-#include "handler//handler.h"
-#include "handler/loop_thread.h"
+#include "libs/handler/handler.h"
+#include "libs/handler/loop_thread.h"
 #include "egl/gl_surface.h"
 
-#include "preview_renderer.h"
+#include "camera_preview/preview_renderer.h"
 
 
 #define CAMERA_FACING_BACK	 0

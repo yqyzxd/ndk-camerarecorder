@@ -6,7 +6,7 @@
 #define NDK_CAMERARECORDER_SCREEN_FILTER_H
 
 
-#include "libgles/gles/base_filter.h"
+#include "gles/base_filter.h"
 class ScreenFilter: public BaseFilter{
 private:
     int mTextureWidth;

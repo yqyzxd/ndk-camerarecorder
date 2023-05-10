@@ -5,7 +5,7 @@
 #ifndef NDK_CAMERARECORDER_CAMERA_FILTER_H
 #define NDK_CAMERARECORDER_CAMERA_FILTER_H
 
-#include "utils/log.h"
+#include "../utils/log.h"
 
 #include "gles/base_fbo_filter.h"
 

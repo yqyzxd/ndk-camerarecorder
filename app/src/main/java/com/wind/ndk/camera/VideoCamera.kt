@@ -10,17 +10,17 @@ import android.view.Surface
 import javax.microedition.khronos.opengles.GL11Ext
 
 @Suppress("DEPRECATION")
-class VideoCamera(private val mActivity:Activity) {
+class VideoCamera(private val mActivity: Activity) {
 
     private var mCamera: Camera? = null
     private var mSurfaceTexture: SurfaceTexture? = null
 
-    private var mCallback:Callback?=null
+    private var mCallback: Callback? = null
     private var mVideoWidth = VIDEO_WIDTH_1280
     private var mVideoHeight = VIDEO_HEIGHT_720
 
 
-    fun configure(cameraFacingId: Int) :com.wind.ndk.camera.CameraInfo{
+    fun configure(cameraFacingId: Int): com.wind.ndk.camera.CameraInfo {
         if (mCamera != null) {
             releaseCamera()
         }
@@ -55,14 +55,14 @@ class VideoCamera(private val mActivity:Activity) {
 
 
             }
-            mCamera?.parameters=parameters
+            mCamera?.parameters = parameters
             mCamera?.setErrorCallback { error, _ ->
                 println("ErrorCallback error:$error")
             }
             setCameraDisplayOrientation(cameraFacingId)
-            return CameraInfo(mVideoWidth,mVideoHeight, getCameraFacing(cameraFacingId))
+            return CameraInfo(mVideoWidth, mVideoHeight, getCameraFacing(cameraFacingId))
         } catch (e: Exception) {
-           throw CameraException(e.message?:"")
+            throw CameraException(e.message ?: "")
         }
     }
 
@@ -102,7 +102,13 @@ class VideoCamera(private val mActivity:Activity) {
         return supported
     }
 
-     fun releaseCamera() {
+    fun releaseCamera() {
+        mSurfaceTexture?.setOnFrameAvailableListener(null)
+        //需要从Camera移除SurfaceTexture，因为SurfaceTexture release后会进入'abandoned' state，
+        // 若不移除日志中会打出如下Error Log： [SurfaceTexture-1-10493-0](id:28fd00000000,api:4,p:1089,c:10493) queueBuffer: BufferQueue has been abandoned
+        mCamera?.setPreviewTexture(null)
+
+        // puts the SurfaceTexture into the 'abandoned' state
         mSurfaceTexture?.release()
         mSurfaceTexture = null
 
@@ -113,7 +119,7 @@ class VideoCamera(private val mActivity:Activity) {
     }
 
     fun setPreviewTexture(textureId: Int) {
-        mSurfaceTexture= SurfaceTexture(textureId)
+        mSurfaceTexture = SurfaceTexture(textureId)
         mCamera?.apply {
 
             setPreviewTexture(mSurfaceTexture)
@@ -136,37 +142,37 @@ class VideoCamera(private val mActivity:Activity) {
         const val VIDEO_HEIGHT_720 = 720
 
         @JvmStatic
-        fun getCameraFacing(cameraId:Int):Int{
-            var facing =0
-            val cameraInfo=CameraInfo()
-            Camera.getCameraInfo(cameraId,cameraInfo)
-            if (cameraInfo.facing==Camera.CameraInfo.CAMERA_FACING_FRONT){
-                facing=1
+        fun getCameraFacing(cameraId: Int): Int {
+            var facing = 0
+            val cameraInfo = CameraInfo()
+            Camera.getCameraInfo(cameraId, cameraInfo)
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                facing = 1
             }
             return facing
         }
 
     }
-    fun setCallback(callback: Callback){
-        this.mCallback=callback
+
+    fun setCallback(callback: Callback) {
+        this.mCallback = callback
     }
 
     fun updateTexImage(): FloatArray {
-        var arr= floatArrayOf(
-            1f,0f,0f,0f,
-            0f,1f,0f,0f,
-            0f,0f,1f,0f,
-            0f,0f,0f,1f,
-            )
-        Log.e("mSurfaceTexture","before mSurfaceTexture?.updateTexImage()")
+        var arr = floatArrayOf(
+            1f, 0f, 0f, 0f,
+            0f, 1f, 0f, 0f,
+            0f, 0f, 1f, 0f,
+            0f, 0f, 0f, 1f,
+        )
         mSurfaceTexture?.updateTexImage()
-        Log.e("mSurfaceTexture","after mSurfaceTexture?.updateTexImage()")
+        //获取纹理矩阵
         mSurfaceTexture?.getTransformMatrix(arr)
 
         return arr
     }
 
-    interface Callback{
+    interface Callback {
         fun onFrameAvailable()
     }
 }

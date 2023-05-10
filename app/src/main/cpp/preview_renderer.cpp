@@ -90,12 +90,13 @@ void PreviewRenderer::onDrawFrame() {
 
 }
 void PreviewRenderer::surfaceDestroyed() {
+    //通知java层释放camera
+    mCaller->releaseCamera();
 
     mCameraFilter->dealloc();
     mScreenFilter->dealloc();
 
-    //通知java层释放camera
-    mCaller->releaseCamera();
+
 }
 
 void PreviewRenderer::updateTexImage() {

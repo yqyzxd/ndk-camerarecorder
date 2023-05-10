@@ -43,8 +43,11 @@ GLuint BaseFilter::onDrawFrame(GLuint textureId) {
     checkGlError("glDrawArrays");
 
     glDisableVertexAttribArray(mPositionLocation);
+    checkGlError("glDisableVertexAttribArray mPositionLocation");
     glDisableVertexAttribArray(mCoordLocation);
-    glBindTexture(textureId,0);
+    checkGlError("glDisableVertexAttribArray mCoordLocation");
+    glBindTexture(getTextureTarget(),0);
+    checkGlError("glBindTexture");
     return textureId;
 }
 

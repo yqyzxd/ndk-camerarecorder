@@ -98,7 +98,8 @@ void GLSurface::requestRender() {
 }
 
 void GLSurface::dealloc() {
-    LOGE("dealloc");
+    LOGE("dealloc:%d",mRenderPrepared);
+
     while (mRenderPrepared){
         surfaceDestroyed();
         usleep(0.5*(1e6));
@@ -110,12 +111,11 @@ void GLSurface::dealloc() {
     mKillRendererThread= true;
     pthread_cond_signal(&mCond);
     pthread_mutex_unlock(&mLock);
-    LOGE("wait GL THREAD");
+    LOGI("wait GL THREAD");
     //等待线程结束
     pthread_join(_rendererThreadId, 0);
     mRenderThreadStarted= false;
-
-    LOGE("GL THREAD dead");
+    LOGI("GL THREAD dead");
 }
 void GLSurface::renderLoop() {
     mRenderThreadStarted= true;

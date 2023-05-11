@@ -8,9 +8,9 @@
 
 #include "base_egl_surface.h"
 
-class OffscreenSurface : public BaseEGLSurface{
+class OffScreenSurface : public BaseEGLSurface{
 public:
-    OffscreenSurface(EGLCore *eglCore,int width,int height);
+    OffScreenSurface(EGLCore *eglCore,int width,int height);
 
     void release();
 

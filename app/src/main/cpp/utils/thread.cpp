@@ -4,17 +4,26 @@
 
 #include "thread.h"
 
-Thread::Thread() {
-
+Thread::Thread(Runnable* runnable) {
+    this->runnable=runnable;
 }
 Thread::~Thread() {
-
+    if(runnable!= nullptr){
+        delete runnable;
+        runnable= nullptr;
+    }
 }
 
 void *threadCallback(void *ctx) {
     Thread* thread=(Thread*)ctx;
     thread->run();
     return 0;
+}
+
+void Thread::run() {
+    if(runnable!= nullptr){
+        runnable->run();
+    }
 }
 
 void Thread::start() {

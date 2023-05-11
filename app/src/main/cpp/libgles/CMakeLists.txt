@@ -12,10 +12,12 @@ add_library(
         egl/window_surface.cpp
         egl/offscreen_surface.cpp
         egl/gl_surface.cpp
+        egl/gl_offscreen_surface.cpp
         gles/base_filter.cpp
         gles/gl_utils.cpp
         gles/texture.cpp
         gles/base_fbo_filter.cpp
+
 )
 
 target_link_libraries(

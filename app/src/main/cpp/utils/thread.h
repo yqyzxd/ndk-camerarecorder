@@ -5,24 +5,25 @@
 #ifndef NDK_HANDLER_THREAD_H
 #define NDK_HANDLER_THREAD_H
 #include <pthread.h>
-
+#include "runnable.h"
 void* threadCallback(void* ctx);
 
 class Thread {
 
 public:
-    Thread();
-    virtual ~Thread()=0;
+    Thread(Runnable* runnable);
+    Thread():Thread((Runnable*)nullptr){};
+    virtual ~Thread();
 
     /**启动线程*/
     virtual void start();
 
     /**线程函数*/
-    virtual void run()=0;
+    virtual void run();
 
 private:
     pthread_t threadId;
-
+    Runnable* runnable;
    friend void* threadCallback(void* ctx);
 };
 

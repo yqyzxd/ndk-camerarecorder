@@ -7,7 +7,7 @@
 
 
 #include "../libgles/gles/gl_utils.h"
-
+#include <stdio.h>
 class VideoEncoderAdapter {
 public:
     VideoEncoderAdapter();
@@ -18,12 +18,13 @@ public:
     virtual void encode()=0;
     virtual void dealloc()=0;
 
-private:
+protected:
     FILE* h264File;
     int width;
     int height;
     int bitRate;
     int frameRate;
+    int textureId;
 };
 
 

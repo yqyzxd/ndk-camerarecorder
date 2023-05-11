@@ -22,7 +22,8 @@ enum SurfaceEvent{
 };
 class GLSurface {
 public:
-    GLSurface();
+    GLSurface(EGLContext sharedContext);
+    GLSurface(): GLSurface(EGL_NO_CONTEXT){};
     virtual  ~GLSurface();
 
     void setRenderMode(RenderMode mode);
@@ -31,9 +32,17 @@ public:
     virtual void surfaceCreated(ANativeWindow* window);
     virtual void surfaceChanged(int width,int height);
     virtual void surfaceDestroyed(void);
+    /**request to render frame*/
     void requestRender();
     void queueEvent(Runnable* runnable);
     virtual void dealloc();
+
+    /**return WindowSurface or OffScreenSurface*/
+    virtual BaseEGLSurface* createEGLSurface();
+
+protected:
+    //共享EGLContext
+    EGLContext mSharedContext;
 private:
     pthread_t _rendererThreadId=0;
     pthread_mutex_t mLock;
@@ -54,18 +63,17 @@ private:
     //渲染器
     GLRenderer* mRenderer=0;
     //EGL Surface
-    WindowSurface* mSurface=0;
+    BaseEGLSurface* mSurface=0;
     //渲染模式
     RenderMode mRenderMode=RENDER_MODE_CONTINUOUSLY;
     std::queue<Runnable*>* mRunnables= nullptr;
     bool mWakeUpFromDestroyed= false;
 
 
+
 private:
     static void* threadStartRoutine(void *myself);
-
     void renderLoop();
-
     void releaseSurface();
 };
 

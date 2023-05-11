@@ -14,7 +14,7 @@ add_library(
         message_queue.cpp
         message.cpp
 
-        ../utils/thread.cpp
+        ../../utils/thread.cpp
         )
 
 

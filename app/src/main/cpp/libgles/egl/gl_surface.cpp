@@ -8,7 +8,8 @@
 
 
 #define LOG_TAG "GLSurface"
-GLSurface::GLSurface() {
+GLSurface::GLSurface(EGLContext sharedContext) {
+    mSharedContext=sharedContext;
     mRenderPrepared= false;
     mRenderMode=RENDER_MODE_WHEN_DIRTY;
     mRunnables=new std::queue<Runnable*>();
@@ -127,9 +128,7 @@ void GLSurface::renderLoop() {
             case SURFACE_EVENT_CREATED:
                 mSurfaceEvent=SURFACE_EVENT_NONE;
                 if (mRenderer){
-                    EGLCore* egl=new EGLCore();
-                    egl->init();
-                    mSurface=new WindowSurface(egl,window);
+                    mSurface=createEGLSurface()
                     mSurface->makeCurrent();
                     LOGI("before surfaceCreated ");
                     mRenderer->surfaceCreated();
@@ -187,6 +186,12 @@ void GLSurface::renderLoop() {
         //LOGE("GL thread next loop");
         pthread_mutex_unlock(&mLock);
     }
+}
+
+BaseEGLSurface *GLSurface::createEGLSurface() {
+    EGLCore* egl=new EGLCore();
+    egl->init(sharedContext);
+    return new WindowSurface(egl,window);
 }
 
 void GLSurface::releaseSurface() {

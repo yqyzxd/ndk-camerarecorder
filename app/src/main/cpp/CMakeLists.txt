@@ -31,6 +31,9 @@ add_library( # Sets the name of the library.
 
         encoder/video_frame.cpp
         encoder/video_encoder_adapter.cpp
+        encoder/soft/soft_encoder_adapter.cpp
+        encoder/soft/x264_encoder.cpp
+        encoder/soft/copy_texture_renderer.cpp
         )
 
 

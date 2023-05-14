@@ -11,7 +11,8 @@
 #include "window_surface.h"
 #include "../../utils/runnable.h"
 #include "../../utils/log.h"
-
+#include <unistd.h>
+#include "gles/gl_utils.h"
 #include <queue>
 
 enum RenderMode{
@@ -40,6 +41,10 @@ public:
     /**return WindowSurface or OffScreenSurface*/
     virtual BaseEGLSurface* createEGLSurface();
 
+    virtual EGLContext getEGLContext();
+
+    //渲染环境是否准备就绪
+    virtual bool isRenderPrepared();
 protected:
     //共享EGLContext
     EGLContext mSharedContext;

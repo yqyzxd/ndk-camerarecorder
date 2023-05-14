@@ -8,13 +8,13 @@
 #include <pthread.h>
 class Condition {
 public:
-    Condition(pthread_mutex_t mutex);
+    Condition(pthread_mutex_t* mutex);
     ~Condition();
 
     int await();
     int signal();
 private:
-    pthread_mutex_t mutex;
+    pthread_mutex_t* mutex;
     pthread_cond_t cond;
 };
 

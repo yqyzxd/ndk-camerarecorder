@@ -29,10 +29,9 @@ void BaseEGLSurface::createOffscreenSurface(int width, int height) {
     mWidth=width;
     mHeight=height;
 }
-void BaseEGLSurface::releaseEglSurface() {
-    mEGLCore->releaseSurface(mEGLSurface);
-    mEGLSurface=EGL_NO_SURFACE;
-    mWidth=mHeight=-1;
+
+EGLContext BaseEGLSurface::getEGLContext() {
+    return mEGLCore->getContext();
 }
 void BaseEGLSurface::makeCurrent() {
     mEGLCore->makeCurrent(mEGLSurface);
@@ -60,4 +59,17 @@ int BaseEGLSurface::getWidth() {
 }
 int BaseEGLSurface::getHeight() {
     return mHeight;
+}
+
+void BaseEGLSurface::releaseEGLSurface() {
+    if (mEGLSurface!=EGL_NO_SURFACE){
+        mEGLCore->releaseSurface(mEGLSurface);
+        mEGLSurface=EGL_NO_SURFACE;
+    }
+
+    mWidth=mHeight=-1;
+}
+
+void BaseEGLSurface::release() {
+    releaseEGLSurface();
 }

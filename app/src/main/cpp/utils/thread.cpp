@@ -29,3 +29,7 @@ void Thread::run() {
 void Thread::start() {
     pthread_create(&threadId,0,threadCallback,this);
 }
+
+void Thread::join() {
+    pthread_join(threadId,0);
+}

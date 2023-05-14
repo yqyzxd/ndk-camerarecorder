@@ -11,8 +11,8 @@
 class OffScreenSurface : public BaseEGLSurface{
 public:
     OffScreenSurface(EGLCore *eglCore,int width,int height);
+    ~OffScreenSurface();
 
-    void release();
 
 
 };

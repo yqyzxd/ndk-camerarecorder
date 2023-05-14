@@ -8,17 +8,12 @@ WindowSurface::WindowSurface(EGLCore *eglCore, ANativeWindow *window) :BaseEGLSu
     mSurface=window;
     createWindowSurface(mSurface);
 }
-WindowSurface::WindowSurface(EGLCore *eglCore, ANativeWindow *window, bool releaseSurface):BaseEGLSurface(eglCore) {
 
-    this->mSurface=window;
-    createWindowSurface(window);
-    this->mReleaseSurface=releaseSurface;
-}
 WindowSurface::~WindowSurface() {
 
 }
 void WindowSurface::release() {
-    releaseEglSurface();
+    BaseEGLSurface::release();
     if (mSurface){
         ANativeWindow_release(mSurface);
         mSurface=NULL;

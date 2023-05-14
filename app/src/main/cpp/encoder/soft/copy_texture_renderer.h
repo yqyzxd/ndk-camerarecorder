@@ -6,12 +6,17 @@
 #define NDK_CAMERARECORDER_COPY_TEXTURE_RENDERER_H
 
 
-#include "gles/base_filter.h"
 #include "egl/gl_renderer.h"
+#include "gles/texture.h"
+#include "gles/base_fbo_filter.h"
+#include "gles/rgb_to_yuy2_filter.h"
+#include "../../utils/types.h"
+#include "../../utils/log.h"
 
+typedef void (*Callback) (void *ctx, void* bytes) ;
 class CopyTextureRenderer : public GLRenderer {
 public:
-    CopyTextureRenderer();
+    CopyTextureRenderer(Callback callback,void* ctx);
 
     ~CopyTextureRenderer();
 
@@ -21,9 +26,21 @@ public:
     void surfaceDestroyed();
     void onDrawFrame();
 
-private:
-    BaseFilter *mFilter;
 
+    void updateTex(int textureId);
+
+
+private:
+    BaseFboFilter *mFboFilter;
+    RgbToYuy2Filter* mYuy2Filter;
+
+    Texture* mTexture;
+    int mInputTextureId;
+
+    Callback mCallback;
+    void* mCallbackCtx;
+    int mWidth;
+    int mHeight;
 };
 
 

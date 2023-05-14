@@ -79,10 +79,8 @@ GLfloat *CameraPreviewSchedulerCaller::updateTexImage() {
     GLfloat * result;
     jclass jclazz=env->GetObjectClass(jobj);
     jmethodID  updateTexImageMethodID=env->GetMethodID(jclazz,"updateTexImageFromNative","()[F");
-    LOGI("before call updateTexImageMethodID");
      jobject resultObj= static_cast<jfloatArray>(env->CallObjectMethod(jobj,
                                                                           updateTexImageMethodID));
-    LOGI("after call updateTexImageMethodID");
     jfloatArray jfloatArr= static_cast<jfloatArray>(resultObj);
 
     result=env->GetFloatArrayElements(jfloatArr,0);

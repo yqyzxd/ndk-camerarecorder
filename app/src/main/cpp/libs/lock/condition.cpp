@@ -3,7 +3,8 @@
 //
 
 #include "condition.h"
-Condition::Condition(pthread_mutex_t mutex): mutex(mutex) {
+Condition::Condition(pthread_mutex_t* mutex) {
+    this->mutex=mutex;
     pthread_cond_init(&cond,0);
 }
 
@@ -12,5 +13,9 @@ Condition::~Condition() {
 }
 
 int Condition::await() {
-    return pthread_cond_wait(&cond,&mutex);
+    return pthread_cond_wait(&cond,mutex);
+}
+
+int Condition::signal() {
+    return pthread_cond_signal(&cond);
 }

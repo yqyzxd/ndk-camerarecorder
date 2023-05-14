@@ -6,11 +6,9 @@
 
 OffScreenSurface::OffScreenSurface(EGLCore *eglCore,int width,int height) : BaseEGLSurface(eglCore) {
 
-
     createOffscreenSurface(width,height);
 }
 
+OffScreenSurface::~OffScreenSurface() {}
 
-void OffScreenSurface::release() {
-    releaseEglSurface();
-}
+

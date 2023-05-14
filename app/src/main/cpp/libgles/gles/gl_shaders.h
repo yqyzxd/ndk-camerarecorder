@@ -4,7 +4,9 @@
 
 #ifndef NDK_CAMERARECORDER_GL_SHADERS_H
 #define NDK_CAMERARECORDER_GL_SHADERS_H
+
 #include <GLES2/gl2.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,7 +56,7 @@ static char *camera_vertex = SHADER_STRING(
         }
 );
 
-static char* camera_fragment=
+static char *camera_fragment =
         "#extension GL_OES_EGL_image_external : require\n"
         "precision mediump float;\n"
         "uniform samplerExternalOES u_Texture;\n"
@@ -63,13 +65,48 @@ static char* camera_fragment=
         "   gl_FragColor=texture2D(u_Texture,v_Coordinate);"
         "}\n";
 
+// YUY2（和YUYV）格式为每个像素保留Y分量，而UV分量在水平方向上每两个像素采样一次。一个宏像素为4个字节，实际表示2个像素。（4:2:2的意思为一个宏像素中有4个Y分量、2个U分量和2个V分量。）
+//图像数据中YUV分量排列顺序如下： Y0 U0 Y1 V0    Y2 U2 Y3 V2 …
+static char *rgba_to_yuy2_fragment = SHADER_STRING(
+        precision mediump float;
+        //纹理坐标
+        varying vec2 v_Coordinate;
+        //采样器
+        uniform sampler2D u_Texture;
+
+        //rgb转yuv的系数
+        uniform vec4 u_CoefficientY;
+        uniform vec4 u_CoefficientU;
+        uniform vec4 u_CoefficientV;
+
+        //纹理图片的宽度为width，纹理坐标s范围为0-1，那么step为 1/width 。yuy2即yuv422下宽度变为原来的一半，那么step为 1/width/2 =0.5/width
+        uniform highp float u_Step;
+
+        void main() {
+            vec2 step = vec2(u_Step, 0);
+
+            //取出左右像素点，通过rgb转yuv的公式分别计算出y u v
+            vec4 lRGBA = texture2D(u_Texture, v_Coordinate - step);
+            vec4 rRGBA = texture2D(u_Texture, v_Coordinate + step);
+            vec4 lRGB = vec4(lRGBA.rgb, 1);
+            float y0 = dot(lRGB, u_CoefficientY);
+            float u0 = dot(lRGB, u_CoefficientU);
+            float v0 = dot(lRGB, u_CoefficientV);
+
+            vec4 rRGB = vec4(rRGBA.rgb, 1);
+            float y1 = dot(rRGB, u_CoefficientY);
+
+            gl_FragColor = vec4(y0, u0, y1, v0);
+        }
+
+);
 
 //4*4 单位矩阵
-static GLfloat* identity_matrix=new GLfloat[16]{
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,0,
-        0,0,0,1,
+static GLfloat *identity_matrix = new GLfloat[16]{
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
 };
 
 #ifdef __cplusplus

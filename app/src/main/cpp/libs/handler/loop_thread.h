@@ -7,7 +7,7 @@
 
 
 #include "looper.h"
-#include "../utils/thread.h"
+#include "../../utils/thread.h"
 
 class LoopThread : public Thread{
 

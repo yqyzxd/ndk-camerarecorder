@@ -38,12 +38,18 @@ public:
 
     void switchCamera(int cameraFacingId);
 
+    void startEncode(const char *h264File, int width, int height, int videoBitrate, int frameRate);
+
+    void stopEncode();
+
 private:
 
     GLSurface* glSurface;
     int cameraFacingId;
     //正在切换相机
     bool mSwitchingCamera;
+
+    PreviewRenderer* mPreviewRenderer;
 };
 
 

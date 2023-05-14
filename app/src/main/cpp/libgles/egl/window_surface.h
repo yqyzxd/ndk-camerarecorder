@@ -12,10 +12,9 @@ class WindowSurface : public BaseEGLSurface {
 
 public:
     WindowSurface(EGLCore* eglCore,ANativeWindow* window);
-    WindowSurface(EGLCore* eglCore,ANativeWindow* window, bool releaseSurface);
     ~WindowSurface();
 
-    void release();
+    void release() override;
     void recreate(EGLCore* eglCore);
 
 private:

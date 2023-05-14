@@ -50,10 +50,26 @@ JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeRel
 /*
  * Class:     com_wind_ndk_camera_CameraPreviewScheduler
  * Method:    nativeSwitchCamera
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_nativeSwitchCamera
-  (JNIEnv *, jobject,jint);
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_wind_ndk_camera_CameraPreviewScheduler
+ * Method:    startEncode
+ * Signature: (Ljava/lang/String;IIII)V
+ */
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_startEncode
+  (JNIEnv *, jobject, jstring, jint, jint, jint, jint);
+
+/*
+ * Class:     com_wind_ndk_camera_CameraPreviewScheduler
+ * Method:    stopEncode
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wind_ndk_camera_CameraPreviewScheduler_stopEncode
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

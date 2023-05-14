@@ -3,13 +3,18 @@
 //
 
 #include "preview_renderer.h"
-#include "gles/gl_utils.h"
+
 
 
 #define  LOG_TAG "PreviewRenderer"
 PreviewRenderer::PreviewRenderer(JavaVM*javaVm,jobject jobj,int cameraFacingId) {
     mCameraFacingId=cameraFacingId;
     mCaller=new CameraPreviewSchedulerCaller(javaVm,jobj);
+
+
+    mCameraFilter= nullptr;
+    mScreenFilter= nullptr;
+
 }
 
 PreviewRenderer::~PreviewRenderer() {
@@ -17,7 +22,11 @@ PreviewRenderer::~PreviewRenderer() {
         delete mCaller;
         mCaller= nullptr;
     }
-
+    if (mVideoEncoderAdapter!= nullptr){
+        mVideoEncoderAdapter->dealloc();
+        delete mVideoEncoderAdapter;
+        mVideoEncoderAdapter= nullptr;
+    }
     if (mTexture){
         mTexture->dealloc();
         delete mTexture;
@@ -34,10 +43,19 @@ PreviewRenderer::~PreviewRenderer() {
         delete mScreenFilter;
         mScreenFilter= nullptr;
     }
+
+
 }
 
 void PreviewRenderer::surfaceCreated() {
 
+    mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
+    mTexture->createTexture();
+
+    mScreenFilter=new ScreenFilter();
+
+    startPreview(mCameraFacingId);
+    checkGlError("startPreview");
 
 
 }
@@ -48,10 +66,12 @@ void PreviewRenderer::startPreview(int cameraFacingId) {
     CameraInfo* cameraInfo=mCaller->configCamera(cameraFacingId);
     mTextureWidth=cameraInfo->previewWidth;
     mTextureHeight=cameraInfo->previewHeight;
-    mCameraFilter=new CameraFilter();
-    checkGlError("createTexture");
+    if (mCameraFilter== nullptr){//如重新创建CameraFilter，会导致切换摄像头时黑屏，因为重新创建时没有调用onReady设置宽高
+        mCameraFilter=new CameraFilter();
+    }
+    LOGI("before startPreview");
     mCaller->startPreview(mTexture->getTextureId());
-
+    LOGI("after startPreview");
     if (mCameraFacingId==1){ //前置摄像头
         mScreenFilter->setTextureSize(mTextureHeight,mTextureWidth);
     }else{
@@ -62,30 +82,29 @@ void PreviewRenderer::startPreview(int cameraFacingId) {
 
 
 void PreviewRenderer::surfaceChanged(int width, int height) {
-    mTexture=new Texture(GL_TEXTURE_EXTERNAL_OES);
-    mTexture->createTexture();
 
-    mScreenFilter=new ScreenFilter();
-    LOGI("before startPreview");
-    startPreview(mCameraFacingId);
-    checkGlError("startPreview");
-    LOGI("after startPreview");
 
     mCameraFilter->onReady(width,height);
     mScreenFilter->onReady(width,height);
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(1,1,1,1);
     checkGlError("glClearColor");
+
+
 }
 
 void PreviewRenderer::onDrawFrame() {
     checkGlError("onDrawFrame");
     int textureId=mCameraFilter->onDrawFrame(mTexture->getTextureId());
     checkGlError("mCameraFilter onDrawFrame");
-    mScreenFilter->onDrawFrame(textureId);
+    textureId=mScreenFilter->onDrawFrame(textureId);
     checkGlError("mScreenFilter onDrawFrame");
 
 
+    if (mEncoding){
+        //encode
+        mVideoEncoderAdapter->encode(textureId);
+    }
 
 
 }
@@ -104,6 +123,24 @@ void PreviewRenderer::updateTexImage() {
     checkGlError("updateTexImage");
     GLfloat* matrix=mCaller->updateTexImage();
     mCameraFilter->setMatrix(matrix);
+}
+
+void PreviewRenderer::setEGLContext(EGLContext sharedEGLContext) {
+    this->mSharedEGLContext=sharedEGLContext;
+}
+
+void PreviewRenderer::startEncode(const char *h264File, int width, int height, int videoBitrate,
+                                  int frameRate) {
+
+    mVideoEncoderAdapter=new SoftVideoEncoderAdapter();
+    mVideoEncoderAdapter->init(h264File,width,height,videoBitrate,frameRate);
+    mVideoEncoderAdapter->prepare(mSharedEGLContext);
+    mEncoding= true;
+}
+
+void PreviewRenderer::stopEncode() {
+    mEncoding= false;
+    mVideoEncoderAdapter->stop();
 }
 
 

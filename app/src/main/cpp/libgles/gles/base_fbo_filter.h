@@ -7,18 +7,23 @@
 
 
 #include "base_filter.h"
-
+#include "gl_utils.h"
+#include "../../utils/log.h"
 class BaseFboFilter: public BaseFilter{
 private:
-    GLuint fbo;
-    GLuint fboTextureId;
+    GLuint mFbo;
+    GLuint mFboTextureId;
 public:
     BaseFboFilter(const char *vertexSource, const char *fragmentSource);
+    BaseFboFilter(): BaseFboFilter(base_vertex,base_fragment){};
     virtual ~BaseFboFilter();
     virtual void onReady(int width,int height);
     virtual GLuint onDrawFrame(GLuint textureId);
+    int readPixels(void *pixels);
     virtual void dealloc();
-
+private:
+    void bindFramebuffer();
+    void unBindFramebuffer();
 
 };
 

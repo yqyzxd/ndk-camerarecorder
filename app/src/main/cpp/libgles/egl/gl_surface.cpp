@@ -2,9 +2,9 @@
 // Created by 史浩 on 2023/3/29.
 //
 
-#include <unistd.h>
+
 #include "gl_surface.h"
-#include "gles/gl_utils.h"
+
 
 
 #define LOG_TAG "GLSurface"
@@ -32,7 +32,7 @@ void *GLSurface::threadStartRoutine(void *myself) {
 }
 
 void GLSurface::setRenderer(GLRenderer *renderer) {
-    LOGI("setRenderer");
+    LOGI("setRenderer %d",mRenderThreadStarted);
     this->mRenderer=renderer;
     if (mRenderThreadStarted){
         //already started
@@ -125,10 +125,12 @@ void GLSurface::renderLoop() {
         mWakeUpFromDestroyed= false;
         pthread_mutex_lock(&mLock);
         switch (mSurfaceEvent) {
+            case SURFACE_EVENT_NONE:
+                break;
             case SURFACE_EVENT_CREATED:
                 mSurfaceEvent=SURFACE_EVENT_NONE;
                 if (mRenderer){
-                    mSurface=createEGLSurface()
+                    mSurface=createEGLSurface();
                     mSurface->makeCurrent();
                     LOGI("before surfaceCreated ");
                     mRenderer->surfaceCreated();
@@ -166,7 +168,6 @@ void GLSurface::renderLoop() {
                 Runnable* runnable=mRunnables->front();
                 mRunnables->pop();
                 LOGI("before runnable  run");
-                LOGI("pthread_self:%d",pthread_self());
                 runnable->run();
                 delete runnable;
                 LOGI("after runnable  run");
@@ -188,9 +189,12 @@ void GLSurface::renderLoop() {
     }
 }
 
+bool GLSurface::isRenderPrepared() {
+    return mRenderPrepared;
+}
 BaseEGLSurface *GLSurface::createEGLSurface() {
     EGLCore* egl=new EGLCore();
-    egl->init(sharedContext);
+    egl->init(mSharedContext);
     return new WindowSurface(egl,window);
 }
 
@@ -205,4 +209,12 @@ void GLSurface::releaseSurface() {
         delete mSurface;
         mSurface=NULL;
     }
+}
+
+EGLContext GLSurface::getEGLContext() {
+    if (mSurface!= nullptr){
+        return  mSurface->getEGLContext();
+    }
+    return EGL_NO_CONTEXT;
+
 }

@@ -11,16 +11,23 @@
 #include "../camera_preview_scheduler_caller.h"
 #include "gles/texture.h"
 #include "screen_filter.h"
+#include "gles/gl_utils.h"
+#include "../encoder/soft/soft_video_encoder_adapter.h"
 class PreviewRenderer: public GLRenderer{
 private:
     CameraFilter* mCameraFilter;
     ScreenFilter* mScreenFilter;
-    CameraPreviewSchedulerCaller* mCaller;
+    CameraPreviewSchedulerCaller* mCaller= nullptr;
     int mCameraFacingId;
 
     Texture* mTexture;
     int mTextureWidth;
     int mTextureHeight;
+
+    EGLContext mSharedEGLContext;
+    VideoEncoderAdapter* mVideoEncoderAdapter= nullptr;
+    //是否开启编码
+    bool mEncoding= false;
 public:
     PreviewRenderer(JavaVM* javaVM,jobject jobj,int cameraFacingId);
     ~PreviewRenderer();
@@ -32,6 +39,12 @@ public:
     void updateTexImage();
 
     void startPreview(int cameraFacingId);
+
+    void setEGLContext(EGLContext pVoid);
+
+    void startEncode(const char *h264File, int width, int height, int videoBitrate, int frameRate);
+
+    void stopEncode();
 };
 
 

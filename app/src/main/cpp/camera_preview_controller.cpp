@@ -5,12 +5,9 @@
 #include "camera_preview_controller.h"
 #define LOG_TAG "CameraPreviewController"
 void CameraPreviewController::updateTexImage(void *ctx) {
-    LOGI("before updateTexImage");
     CameraPreviewController* controller= static_cast<CameraPreviewController *>(ctx);
     PreviewRenderer*renderer= dynamic_cast<PreviewRenderer *>(controller->glSurface->getRenderer());
-    LOGI("pthread_self:%d",pthread_self());
     renderer->updateTexImage();
-    LOGI("after updateTexImage");
 
 }
 
@@ -26,7 +23,9 @@ CameraPreviewController::CameraPreviewController(JavaVM *javaVM, jobject jobj,in
     mSwitchingCamera= false;
     this->cameraFacingId=cameraFacingId;
     glSurface=new GLSurface;
-    glSurface->setRenderer(new PreviewRenderer(javaVM,jobj,cameraFacingId));
+    mPreviewRenderer=new PreviewRenderer(javaVM,jobj,cameraFacingId);
+
+    glSurface->setRenderer(mPreviewRenderer);
 }
 
 CameraPreviewController::~CameraPreviewController() {
@@ -42,7 +41,9 @@ void CameraPreviewController::onSurfaceCreated(ANativeWindow *window) {
 }
 
 void CameraPreviewController::onSurfaceChanged(int width, int height) {
+    mPreviewRenderer->setEGLContext(glSurface->getEGLContext());
     glSurface->surfaceChanged(width,height);
+
 }
 
 void CameraPreviewController::onSurfaceDestroyed() {
@@ -70,6 +71,16 @@ void CameraPreviewController::switchCamera(int cameraFacingId) {
     this->cameraFacingId=cameraFacingId;
     glSurface->queueEvent(new Runnable(innerSwitchCamera,this));
 
+}
+
+void
+CameraPreviewController::startEncode(const char *h264File, int width, int height, int videoBitrate,
+                                     int frameRate) {
+    mPreviewRenderer->startEncode(h264File,width,height,videoBitrate,frameRate);
+}
+
+void CameraPreviewController::stopEncode() {
+    mPreviewRenderer->stopEncode();
 }
 
 

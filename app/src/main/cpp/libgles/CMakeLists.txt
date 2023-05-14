@@ -17,6 +17,8 @@ add_library(
         gles/gl_utils.cpp
         gles/texture.cpp
         gles/base_fbo_filter.cpp
+        gles/rgb_to_yuy2_filter.cpp
+
 
 )
 

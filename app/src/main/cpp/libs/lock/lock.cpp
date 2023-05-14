@@ -3,7 +3,8 @@
 //
 
 #include "lock.h"
-
+#include "../../utils/log.h"
+#define LOG_TAG "Lock"
 Lock::Lock() {
     pthread_mutex_init(&mutex,0);
 }
@@ -21,7 +22,7 @@ int Lock::unlock() {
 }
 
 Condition *Lock::newCondition() {
-    return new Condition(mutex);
+    return new Condition(&mutex);
 }
 
 

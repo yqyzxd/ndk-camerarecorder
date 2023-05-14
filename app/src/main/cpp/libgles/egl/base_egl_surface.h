@@ -12,7 +12,8 @@ class BaseEGLSurface {
 
 public:
     BaseEGLSurface(EGLCore* eglCore);
-    ~BaseEGLSurface();
+    virtual ~BaseEGLSurface();
+
 
     //创建窗口Surface
     void createWindowSurface(ANativeWindow* window);
@@ -22,16 +23,21 @@ public:
     int getWidth();
     //获取高度
     int getHeight();
-    //释放EGLSurface
-    void releaseEglSurface();
+
     //切换当前上下文
-    void makeCurrent();
+    virtual void makeCurrent();
     //交换缓冲区 显示图像
-    bool swapBuffers();
+    virtual bool swapBuffers();
     //设置显示时间戳
     void setPresentationTime(long nsecs);
     //获取当前帧缓冲
     char* getCurrentFrame();
+
+    virtual EGLContext getEGLContext();
+    virtual void release();
+private:
+    //释放EGLSurface
+    void releaseEGLSurface();
 
 protected:
     EGLCore* mEGLCore;

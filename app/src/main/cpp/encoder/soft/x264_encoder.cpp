@@ -19,7 +19,8 @@ X264Encoder::~X264Encoder() {
 int X264Encoder::init(FILE *x264File, int width, int height, int bitRate, int frameRate) {
     this->h264File = x264File;
     /////初始化AvCodecContext/////////////
-    mAVCodec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    //mAVCodec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    mAVCodec = avcodec_find_encoder_by_name("libx264");
     if (mAVCodec == nullptr) {
         LOGE("avcodec_find_encoder error");
         return -1;
@@ -34,25 +35,26 @@ int X264Encoder::init(FILE *x264File, int width, int height, int bitRate, int fr
     mAVCodecContext->height = height;
     mAVCodecContext->time_base= {1,frameRate};
     mAVCodecContext->framerate={frameRate,1};
-    mAVCodecContext->gop_size = frameRate;
-    mAVCodecContext->max_b_frames = 0;
+    mAVCodecContext->gop_size = 10;
+    mAVCodecContext->max_b_frames = 1;
     //使用固定刻度
-    mAVCodecContext->flags |= AV_CODEC_FLAG_QSCALE;
-    mAVCodecContext->i_quant_factor = 0.8;
-    mAVCodecContext->qmin = 10;
-    mAVCodecContext->qmin = 30;
+    //mAVCodecContext->flags |= AV_CODEC_FLAG_QSCALE;
+   // mAVCodecContext->i_quant_factor = 0.8;
+    //mAVCodecContext->qmin = 10;
+   // mAVCodecContext->qmin = 30;
     mAVCodecContext->bit_rate = bitRate;
     //minimum bitrate
-    mAVCodecContext->rc_min_rate = bitRate - 30 * 1000;
-    mAVCodecContext->rc_max_rate = bitRate + 30 * 1000;
+    //mAVCodecContext->rc_min_rate = bitRate - 30 * 1000;
+    //mAVCodecContext->rc_max_rate = bitRate + 30 * 1000;
     //解码器位流缓冲区大小
-    mAVCodecContext->rc_buffer_size = bitRate * 2;
+   // mAVCodecContext->rc_buffer_size = bitRate * 2;
 
+    av_opt_set(mAVCodecContext->priv_data, "preset", "slow", 0);
     //x264独有的参数
-    av_opt_set(mAVCodecContext->priv_data, "preset", "ultrafast", 0);
+    //av_opt_set(mAVCodecContext->priv_data, "preset", "ultrafast", 0);
     //调优 零延迟
-    av_opt_set(mAVCodecContext->priv_data, "tune", "zerolatency", 0);
-    av_opt_set(mAVCodecContext->priv_data, "profile", "main", 0);
+    //av_opt_set(mAVCodecContext->priv_data, "tune", "zerolatency", 0);
+   // av_opt_set(mAVCodecContext->priv_data, "profile", "main", 0);
 
     int ret = avcodec_open2(mAVCodecContext, mAVCodec, nullptr);
     if (ret < 0) {
@@ -111,8 +113,23 @@ int X264Encoder::init(FILE *x264File, int width, int height, int bitRate, int fr
 int X264Encoder::encode(VideoFrame *frame) {
     LOGI("enter encode");
     if (frame!= nullptr) {
+        /* make sure the frame data is writable */
+        int ret = av_frame_make_writable(mYUY2Frame);
+        if (ret < 0){
+            LOGI("av_frame_make_writable error");
+            return ret;
+        }
+        ret = av_frame_make_writable(mAVFrame);
+        if (ret < 0){
+            LOGI("av_frame_make_writable error");
+            return ret;
+        }
         //将数据拷贝到avFrame的buffer
         memcpy(mYUY2Frame->data[0], frame->buffer, frame->size);
+       /* libyuv::RGBAToI420(mYUY2Frame->data[0], mYUY2Frame->linesize[0],   mAVFrame->data[0], mAVFrame->linesize[0],
+                                mAVFrame->data[1], mAVFrame->linesize[1],
+                                mAVFrame->data[2], mAVFrame->linesize[2],
+                                mAVCodecContext->width, mAVCodecContext->height);*/
         //todo 将yuy2数据转换成yuv420P格式
         //YUV格式在存储上存在两类布局：
         //Packed: 打包存储，放在一个数组中
@@ -130,8 +147,8 @@ int X264Encoder::encode(VideoFrame *frame) {
 
         LOGI("after YUY2ToI420");
         int presentationTimeInMills = frame->timeInMills;
-        AVRational timeBase = {1, 1000};
-        int pts = presentationTimeInMills / 1000.0f / av_q2d(timeBase);
+
+        int pts = presentationTimeInMills;
         mAVFrame->pts = pts;
         LOGI("mAVFrame pts:%d", pts);
     }
@@ -141,6 +158,7 @@ int X264Encoder::encode(VideoFrame *frame) {
         LOGE("avcodec_send_frame return :%s", av_err2str(ret));
         //if (ret== AVERROR(EAGAIN) || ret ==AVERROR_EOF){}
         if (ret>=0){
+            LOGE("Write packet %3d (size=%5d)\n", mAvPacket->pts, mAvPacket->size);
             fwrite(mAvPacket->data,1,mAvPacket->size,h264File);
         }
         av_packet_unref(mAvPacket);

@@ -28,7 +28,6 @@ SoftVideoEncoderAdapter::SoftVideoEncoderAdapter() {
 }
 
 SoftVideoEncoderAdapter::~SoftVideoEncoderAdapter() {
-    delete mEncodeThread;
 }
 
 

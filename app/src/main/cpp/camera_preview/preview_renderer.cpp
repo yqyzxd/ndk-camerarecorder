@@ -139,8 +139,16 @@ void PreviewRenderer::startEncode(const char *h264File, int width, int height, i
 }
 
 void PreviewRenderer::stopEncode() {
-    mEncoding= false;
-    mVideoEncoderAdapter->stop();
+    if (mVideoEncoderAdapter!= nullptr){
+        mEncoding= false;
+        LOGI("before stop");
+        mVideoEncoderAdapter->stop();
+        LOGI("after stop");
+        delete mVideoEncoderAdapter;
+        LOGI("delete mVideoEncoderAdapter");
+        mVideoEncoderAdapter= nullptr;
+    }
+
 }
 
 

@@ -57,16 +57,19 @@ class CameraPreviewActivity  : AppCompatActivity() {
 
         binding.btnEncode.setOnClickListener {
             if (mEncoding){
+                mEncoding=false
+
                 mHandler.removeCallbacksAndMessages(null)
                 binding.tvTime.text ="00:00"
                 scheduler.stopEncode()
 
             }else{
                 mEncoding=true
+                mDuration=0
                  /* resolution must be a multiple of two */
                 val width=360
                 val height=640
-                val videoBitrate=400000 //700*1024;
+                val videoBitrate= 700*1024;
                 val frameRate=24
                 val h264File="${getExternalFilesDir(null)?.absolutePath}/camera_preview.h264"
                 println(h264File)

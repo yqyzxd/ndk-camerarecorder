@@ -35,26 +35,26 @@ int X264Encoder::init(FILE *x264File, int width, int height, int bitRate, int fr
     mAVCodecContext->height = height;
     mAVCodecContext->time_base= {1,frameRate};
     mAVCodecContext->framerate={frameRate,1};
-    mAVCodecContext->gop_size = 10;
+    mAVCodecContext->gop_size = frameRate;
     mAVCodecContext->max_b_frames = 1;
     //使用固定刻度
-    //mAVCodecContext->flags |= AV_CODEC_FLAG_QSCALE;
-   // mAVCodecContext->i_quant_factor = 0.8;
-    //mAVCodecContext->qmin = 10;
-   // mAVCodecContext->qmin = 30;
+    mAVCodecContext->flags |= AV_CODEC_FLAG_QSCALE;
+    mAVCodecContext->i_quant_factor = 0.8;
+    mAVCodecContext->qmin = 10;
+    mAVCodecContext->qmin = 30;
     mAVCodecContext->bit_rate = bitRate;
     //minimum bitrate
-    //mAVCodecContext->rc_min_rate = bitRate - 30 * 1000;
-    //mAVCodecContext->rc_max_rate = bitRate + 30 * 1000;
+    mAVCodecContext->rc_min_rate = bitRate - 30 * 1000;
+    mAVCodecContext->rc_max_rate = bitRate + 30 * 1000;
     //解码器位流缓冲区大小
-   // mAVCodecContext->rc_buffer_size = bitRate * 2;
+    mAVCodecContext->rc_buffer_size = bitRate * 2;
 
-    av_opt_set(mAVCodecContext->priv_data, "preset", "slow", 0);
+    //av_opt_set(mAVCodecContext->priv_data, "preset", "slow", 0);
     //x264独有的参数
-    //av_opt_set(mAVCodecContext->priv_data, "preset", "ultrafast", 0);
+    av_opt_set(mAVCodecContext->priv_data, "preset", "ultrafast", 0);
     //调优 零延迟
-    //av_opt_set(mAVCodecContext->priv_data, "tune", "zerolatency", 0);
-   // av_opt_set(mAVCodecContext->priv_data, "profile", "main", 0);
+    av_opt_set(mAVCodecContext->priv_data, "tune", "zerolatency", 0);
+    av_opt_set(mAVCodecContext->priv_data, "profile", "main", 0);
 
     int ret = avcodec_open2(mAVCodecContext, mAVCodec, nullptr);
     if (ret < 0) {

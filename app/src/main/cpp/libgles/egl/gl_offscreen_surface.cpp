@@ -3,6 +3,7 @@
 //
 
 #include "gl_offscreen_surface.h"
+#define LOG_TAG "GLOffScreenSurface"
 GLOffScreenSurface::GLOffScreenSurface(EGLContext sharedContext, int width, int height) : GLSurface(sharedContext){
     this->width=width;
     this->height=height;
@@ -10,5 +11,9 @@ GLOffScreenSurface::GLOffScreenSurface(EGLContext sharedContext, int width, int 
 BaseEGLSurface *GLOffScreenSurface::createEGLSurface() {
     EGLCore* egl=new EGLCore();
     egl->init(mSharedContext);
+    if (mSharedContext== nullptr){
+        LOGI("mSharedContext == NULL");
+    }
+    LOGI("width:%d,height:%d",width,height);
     return new OffScreenSurface(egl,width,height);
 }

@@ -46,14 +46,16 @@ void CopyTextureRenderer::onDrawFrame() {
     }
     LOGI("onDrawFrame");
     int textureId=mFboFilter->onDrawFrame(mInputTextureId);
+    byte* bytes= new byte[mWidth*mHeight*4];
+    // 将像素数据从显存拷贝到内存中
+    mFboFilter->readPixels(bytes);//有数据
     mYuy2Filter->onDrawFrame(textureId);
-
-    byte* bytes= new byte[mWidth*mHeight*2];
+    byte* bytes2= new byte[mWidth*mHeight*2];
     // 将像素数据从显存拷贝到内存中
     LOGI("before readPixels");
-    mYuy2Filter->readPixels(bytes);
+    mYuy2Filter->readPixels(bytes2);//无数据
     LOGI("after readPixels");
-    this->mCallback(mCallbackCtx,bytes);
+    this->mCallback(mCallbackCtx,new byte[mWidth*mHeight*2]);
     LOGI("after mCallback");
 
 }

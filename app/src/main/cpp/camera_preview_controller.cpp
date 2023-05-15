@@ -41,6 +41,9 @@ void CameraPreviewController::onSurfaceCreated(ANativeWindow *window) {
 }
 
 void CameraPreviewController::onSurfaceChanged(int width, int height) {
+    while (glSurface->getEGLContext()== nullptr){
+        LOGI("glSurface->getEGLContext()== nullptr");
+    }
     mPreviewRenderer->setEGLContext(glSurface->getEGLContext());
     glSurface->surfaceChanged(width,height);
 

@@ -16,8 +16,8 @@ class VideoCamera(private val mActivity: Activity) {
     private var mSurfaceTexture: SurfaceTexture? = null
 
     private var mCallback: Callback? = null
-    private var mVideoWidth = VIDEO_WIDTH_640
-    private var mVideoHeight = VIDEO_HEIGHT_480
+    private var mVideoWidth = VIDEO_WIDTH_1280
+    private var mVideoHeight = VIDEO_HEIGHT_720
 
 
     fun configure(cameraFacingId: Int): com.wind.ndk.camera.CameraInfo {

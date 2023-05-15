@@ -34,7 +34,7 @@ void RgbToYuy2Filter::inflateLocation(GLuint textureId) {
     glUniform4fv(mUniformCoefficientV,1,coefficientV);
     checkGlError("glUniform1f mUniformCoefficientV");
 
-    float step=0.5f/(float)mSrcWidth;
+    float step=1/(float)mSrcWidth;
     glUniform1f(mUniformStep,step);
     checkGlError("glUniform1f mUniformStep");
 }

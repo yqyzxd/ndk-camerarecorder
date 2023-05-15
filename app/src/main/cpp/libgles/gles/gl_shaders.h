@@ -86,7 +86,7 @@ static char *rgba_to_yuy2_fragment = SHADER_STRING(
             vec2 step = vec2(u_Step, 0);
 
             //取出左右像素点，通过rgb转yuv的公式分别计算出y u v
-            vec4 lRGBA = texture2D(u_Texture, v_Coordinate - step);
+            vec4 lRGBA = texture2D(u_Texture, v_Coordinate);
             vec4 rRGBA = texture2D(u_Texture, v_Coordinate + step);
             vec4 lRGB = vec4(lRGBA.rgb, 1);
             float y0 = dot(lRGB, u_CoefficientY);

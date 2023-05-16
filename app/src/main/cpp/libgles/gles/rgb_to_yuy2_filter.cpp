@@ -12,8 +12,7 @@ RgbToYuy2Filter::RgbToYuy2Filter(): BaseFboFilter(base_vertex,rgba_to_yuy2_fragm
     mUniformStep= glGetUniformLocation(mProgram,"u_Step");
     checkGlError("glGetUniformLocation mUniformCoefficientY");
     LOGI("mUniformCoefficientY:%d,mUniformCoefficientU:%d,mUniformCoefficientV:%d,mUniformStep:%d",mUniformCoefficientY,mCoordLocation,mUniformCoefficientV,mUniformStep);
-
-        }
+}
 RgbToYuy2Filter::~RgbToYuy2Filter() {
 
 }
@@ -38,7 +37,7 @@ void RgbToYuy2Filter::inflateLocation(GLuint textureId) {
     glUniform4fv(mUniformCoefficientV,1,coefficientV);
     checkGlError("glUniform1f mUniformCoefficientV");
 
-    float step=0.5f/(float)mSrcWidth;
+    float step=1.0f/(float)mSrcWidth;
     glUniform1f(mUniformStep,step);
     checkGlError("glUniform1f mUniformStep");
 }

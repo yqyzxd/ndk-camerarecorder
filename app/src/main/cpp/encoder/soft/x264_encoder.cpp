@@ -36,7 +36,7 @@ int X264Encoder::init(FILE *x264File, int width, int height, int bitRate, int fr
     mAVCodecContext->time_base= {1,frameRate};
     mAVCodecContext->framerate={frameRate,1};
     mAVCodecContext->gop_size = frameRate;
-    mAVCodecContext->max_b_frames = 1;
+    mAVCodecContext->max_b_frames = 0;
     //使用固定刻度
     mAVCodecContext->flags |= AV_CODEC_FLAG_QSCALE;
     mAVCodecContext->i_quant_factor = 0.8;
@@ -137,13 +137,13 @@ int X264Encoder::encode(VideoFrame *frame) {
         //YUY2是packed方式
         //YUV420存储格式有YUV420P和YUV420SP，都是采用planar平面格式存储
         LOGI("before YUY2ToI420");
-        /*libyuv::YUY2ToI420(mYUY2Frame->data[0], mYUY2Frame->linesize[0],
+        libyuv::YUY2ToI420(mYUY2Frame->data[0], mYUY2Frame->linesize[0],
                            mAVFrame->data[0], mAVFrame->linesize[0],
                            mAVFrame->data[1], mAVFrame->linesize[1],
                            mAVFrame->data[2], mAVFrame->linesize[2],
-                           mAVCodecContext->width, mAVCodecContext->height);*/
+                           mAVCodecContext->width, mAVCodecContext->height);
 
-        yuy2_to_yuv420p(mYUY2Frame->data, mYUY2Frame->linesize, mAVCodecContext->width, mAVCodecContext->height, mAVFrame->data, mAVFrame->linesize);
+        //yuy2_to_yuv420p(mYUY2Frame->data, mYUY2Frame->linesize, mAVCodecContext->width, mAVCodecContext->height, mAVFrame->data, mAVFrame->linesize);
 
         LOGI("after YUY2ToI420");
         int presentationTimeInMills = frame->timeInMills;

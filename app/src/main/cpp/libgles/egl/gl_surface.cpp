@@ -177,7 +177,10 @@ void GLSurface::renderLoop() {
             checkGlError("onDrawFrame");
             mRenderer->onDrawFrame();
             LOGI("after onDrawFrame");
-            mSurface->swapBuffers();
+            if (!isOffScreen()){
+                mSurface->swapBuffers();
+            }
+
         }
         if (mRenderMode == RENDER_MODE_WHEN_DIRTY && !mKillRendererThread&& !mWakeUpFromDestroyed){
             LOGI("before pthread_cond_wait");
@@ -217,4 +220,8 @@ EGLContext GLSurface::getEGLContext() {
     }
     return EGL_NO_CONTEXT;
 
+}
+
+bool GLSurface::isOffScreen() {
+    return false;
 }

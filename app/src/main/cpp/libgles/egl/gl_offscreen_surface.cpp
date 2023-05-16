@@ -17,3 +17,7 @@ BaseEGLSurface *GLOffScreenSurface::createEGLSurface() {
     LOGI("width:%d,height:%d",width,height);
     return new OffScreenSurface(egl,width,height);
 }
+
+bool GLOffScreenSurface::isOffScreen() {
+    return true;
+}

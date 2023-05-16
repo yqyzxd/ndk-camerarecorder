@@ -14,6 +14,7 @@ public:
 
     BaseEGLSurface* createEGLSurface() override;
 
+    bool isOffScreen() override;
 private:
     int width;
     int height;

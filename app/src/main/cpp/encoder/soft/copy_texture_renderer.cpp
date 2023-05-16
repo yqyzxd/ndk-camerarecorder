@@ -9,6 +9,7 @@
 CopyTextureRenderer::CopyTextureRenderer(Callback callback,void* ctx) {
     this->mCallback=callback;
     this->mCallbackCtx=ctx;
+    mInputTextureId=-1;
 }
 
 CopyTextureRenderer::~CopyTextureRenderer() {
@@ -25,8 +26,7 @@ void CopyTextureRenderer::surfaceCreated() {
     mFboFilter=new BaseFboFilter();
     mYuy2Filter=new RgbToYuy2Filter();
 
-    mTexture=new Texture();
-    mTexture->createTexture();
+
 }
 void CopyTextureRenderer::surfaceChanged(int width, int height) {
     mFboFilter->onReady(width,height);
@@ -44,18 +44,16 @@ void CopyTextureRenderer::onDrawFrame() {
     if (mInputTextureId<0){
         return;
     }
-    LOGI("onDrawFrame");
+
     int textureId=mFboFilter->onDrawFrame(mInputTextureId);
-    byte* bytes= new byte[mWidth*mHeight*4];
-    // 将像素数据从显存拷贝到内存中
-    mFboFilter->readPixels(bytes);//有数据
     mYuy2Filter->onDrawFrame(textureId);
-    byte* bytes2= new byte[mWidth*mHeight*2];
+
     // 将像素数据从显存拷贝到内存中
-    LOGI("before readPixels");
-    mYuy2Filter->readPixels(bytes2);//无数据
-    LOGI("after readPixels");
-    this->mCallback(mCallbackCtx,new byte[mWidth*mHeight*2]);
+    byte* bytes= new byte[mWidth*mHeight*2];
+    mYuy2Filter->readPixels(bytes);
+    checkGlError("after readPixels");
+
+    this->mCallback(mCallbackCtx,bytes);
     LOGI("after mCallback");
 
 }

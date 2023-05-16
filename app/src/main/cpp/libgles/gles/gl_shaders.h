@@ -66,7 +66,7 @@ static char *camera_fragment =
         "}\n";
 
 // YUY2（和YUYV）格式为每个像素保留Y分量，而UV分量在水平方向上每两个像素采样一次。一个宏像素为4个字节，实际表示2个像素。（4:2:2的意思为一个宏像素中有4个Y分量、2个U分量和2个V分量。）
-//图像数据中YUV分量排列顺序如下： Y0 U0 Y1 V0    Y2 U2 Y3 V2 …
+//图像数据中YUV分量排列顺序如下： Y0 U0 Y1 V0    Y2 U1 Y3 V1 …
 static char *rgba_to_yuy2_fragment = SHADER_STRING(
         precision mediump float;
         //纹理坐标
@@ -79,11 +79,11 @@ static char *rgba_to_yuy2_fragment = SHADER_STRING(
         uniform vec4 u_CoefficientU;
         uniform vec4 u_CoefficientV;
 
-        //纹理图片的宽度为width，纹理坐标s范围为0-1，那么step为 1/width 。yuy2即yuv422下宽度变为原来的一半，那么step为 1/width/2 =0.5/width
-        uniform highp float u_Step;
+        //纹理图片的宽度为width，纹理坐标s范围为0-1，那么step为 1/width 。
+        uniform float u_Step;
 
         void main() {
-            vec2 step = vec2(u_Step, 0);
+            vec2 step = vec2(u_Step, 0.0);
 
             //取出左右像素点，通过rgb转yuv的公式分别计算出y u v
             vec4 lRGBA = texture2D(u_Texture, v_Coordinate);

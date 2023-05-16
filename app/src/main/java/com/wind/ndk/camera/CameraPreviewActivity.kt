@@ -67,9 +67,10 @@ class CameraPreviewActivity  : AppCompatActivity() {
                 mEncoding=true
                 mDuration=0
                  /* resolution must be a multiple of two */
-                val width=360
-                val height=640
-                val videoBitrate= 700*1024;
+                //输出视频宽高注意与camera 宽高一样
+                val width=720//360
+                val height=1280//640
+                val videoBitrate=720*1280*4; //700*1024;
                 val frameRate=24
                 val h264File="${getExternalFilesDir(null)?.absolutePath}/camera_preview.h264"
                 println(h264File)

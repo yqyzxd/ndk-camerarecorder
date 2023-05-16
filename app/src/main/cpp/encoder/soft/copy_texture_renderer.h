@@ -32,9 +32,8 @@ public:
 
 private:
     BaseFboFilter *mFboFilter;
-    RgbToYuy2Filter* mYuy2Filter;
+    BaseFboFilter* mYuy2Filter;
 
-    Texture* mTexture;
     int mInputTextureId;
 
     Callback mCallback;

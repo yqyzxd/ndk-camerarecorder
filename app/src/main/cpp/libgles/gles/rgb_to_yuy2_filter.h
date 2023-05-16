@@ -52,7 +52,7 @@ public:
     ~RgbToYuy2Filter();
 
     void inflateLocation(GLuint textureId) override;
-    void onReady(int width,int height);
+    void onReady(int width,int height) override;
     // GLfloat* getTextureData() override;
 };
 

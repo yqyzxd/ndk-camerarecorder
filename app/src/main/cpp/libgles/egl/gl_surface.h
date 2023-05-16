@@ -45,6 +45,7 @@ public:
 
     //渲染环境是否准备就绪
     virtual bool isRenderPrepared();
+    virtual bool isOffScreen();
 protected:
     //共享EGLContext
     EGLContext mSharedContext;
